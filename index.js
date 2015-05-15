@@ -4,6 +4,8 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 4000;
+// Note: this JSON file is cached. So don't run any cron stuff on this script
+// var imageUrls = require('./image.json');
 
 server.listen(port, function () {
   console.log('Server listening at port %d', port);
@@ -12,13 +14,18 @@ server.listen(port, function () {
 // Routing
 app.use(express.static(__dirname + '/public'));
 
-// Chatroom
-
 // usernames which are currently connected to the chat
 var usernames = {};
 var numUsers = 0;
 
-var countdown = 1000;
+// overhead to track the sentences and the words
+var freqMap = {};
+var sentence = "";
+var remainingWords = {};
+
+var TIME_LIMIT = 30;
+// set the timer to 2 minutes
+var countdown = TIME_LIMIT;
 setInterval(function() {
   countdown--;
   io.sockets.emit('timer', { countdown: countdown });
@@ -28,7 +35,8 @@ io.on('connection', function (socket) {
   var addedUser = false;
 
   socket.on('reset', function (data) {
-    countdown = 1000;
+    countdown = TIME_LIMIT;
+    sentence = "";
     io.sockets.emit('timer', { countdown: countdown });
   });
 
@@ -51,13 +59,28 @@ io.on('connection', function (socket) {
     addedUser = true;
     socket.emit('login', {
       numUsers: numUsers,
-      usernames: usernames
+      usernames: usernames,
+      sentence: sentence
     });
     // echo globally (all clients) that a person has connected
     socket.broadcast.emit('user joined', {
       username: socket.username,
       numUsers: numUsers,
       usernames: usernames
+    });
+  });
+
+  // when a user create the sentence, we broadcast the set sentence to everyone
+  socket.on('create sentence', function (data) {
+    // set the owner of the sentence
+    owner = data.username;
+    sentence = data.sentence;
+    // reset timer when the sentence is created
+    countdown = TIME_LIMIT;
+    // echo globally (all clients) that a sentence has been set
+    socket.broadcast.emit('sentence set', {
+      sentence: sentence,
+      owner: owner
     });
   });
 

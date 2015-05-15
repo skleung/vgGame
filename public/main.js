@@ -13,27 +13,44 @@ $(function() {
   // Initialize varibles
   var $window = $(window);
   var $usernameInput = $('.usernameInput'); // Input for username
+  var $sentenceInput = $('.sentenceInput'); // Input for username
   var $messages = $('.messages'); // Messages area
   var $inputMessage = $('.inputMessage'); // Input message input box
 
   var $loginPage = $('.login.page'); // The login page
   var $chatPage = $('.chat.page'); // The chatroom page
+  var $sentencePage = $('.sentence.page'); // The chatroom page
 
   var $nextButton = $('#next');
+  var $sentence = $('#sentence'); // Input message input box
   var $scoreboard = $('#scoreboard');
+
   // Prompt for setting a username
   var username;
   var connected = false;
   var typing = false;
   var lastTypingTime;
   var $currentInput = $usernameInput.focus();
+  var $sentenceInput = $sentenceInput.focus();
+
+  var $reset = $("#reset");
+  $reset.hide();
+  $sentencePage.hide();
 
   var socket = io();
   socket.on('timer', function (data) {
     $('#counter').html(data.countdown);
+    if (data.countdown <= 0) {
+      $('#counter').html(0);
+      $('#counter').css("color", "red");
+      $reset.fadeIn();
+    } else {
+      $('#counter').css("color", "#aaa");
+    }
   });
 
-  $('#reset').click(function() {
+  $reset.click(function() {
+      $reset.hide()
       socket.emit('reset');
   });
   function addParticipantsMessage (data) {
@@ -53,12 +70,10 @@ $(function() {
     // If the username is valid
     if (username) {
       $loginPage.fadeOut();
-      $chatPage.show();
       $loginPage.off('click');
       $currentInput = $inputMessage.focus();
 
       var color = getUsernameColor(username);
-      console.log("setting user!");
       var score = Math.floor(Math.random()*100);
       $scoreboard.append("<li style='color:"+ color +"'><strong>"+ username + ": "+ score + "</strong></li>");
 
@@ -68,8 +83,31 @@ $(function() {
     }
   }
 
+  // Sets the sentence
+  function setSentence () {
+    var sentence = cleanInput($sentenceInput.val().trim());
+
+    // If the username is valid
+    if (sentence) {
+      $sentencePage.fadeOut();
+      $chatPage.show();
+      $sentencePage.off('click');
+      $currentInput = $inputMessage.focus();
+
+      log("You set the sentence!");
+      $sentence.html(sentence);
+      // Tell the server who you are and the sentence you set
+      data = {
+        username: username,
+        sentence: sentence
+      }
+
+      socket.emit('create sentence', data);
+    }
+  }
+
   // Sends a chat message
-  function sendMessage () {
+  function sendMessage() {
     var message = $inputMessage.val();
     // Prevent markup from being injected into the message
     message = cleanInput(message);
@@ -86,7 +124,7 @@ $(function() {
   }
 
   // Log a message
-  function log (message, options) {
+  function log(message, options) {
     var $el = $('<li>').addClass('log').text(message);
     addMessageElement($el, options);
   }
@@ -249,7 +287,7 @@ $(function() {
 
   // Keyboard events
 
-  $window.keydown(function (event) {
+  $(".login").keydown(function (event) {
     // Auto-focus the current input when a key is typed
     if (!(event.ctrlKey || event.metaKey || event.altKey)) {
       $currentInput.focus();
@@ -263,6 +301,17 @@ $(function() {
       } else {
         setUsername();
       }
+    }
+  });
+
+  $(".sentence.page").keydown(function (event) {
+    // Auto-focus the current input when a key is typed
+    if (!(event.ctrlKey || event.metaKey || event.altKey)) {
+      $sentenceInput.focus();
+    }
+    // When the client hits ENTER on their keyboard
+    if (event.which === 13) {
+      setSentence();
     }
   });
 
@@ -292,14 +341,30 @@ $(function() {
     log(message, {
       prepend: true
     });
+
+    if (data.sentence === "") {
+      $sentencePage.show();
+      $sentenceInput.focus();
+    } else {
+      $chatPage.show();
+      $sentence.html(data.sentence);
+    }
     addParticipantsMessage(data);
     addAllUsers(data);
   });
 
   // Whenever the server emits 'new message', update the chat body
   socket.on('new message', function (data) {
-    console.log("received msg");
     addChatMessage(data);
+  });
+
+  // Whenever the server emits 'create message', set the sentence and enable chat or not
+  // NOTE: Sherman todo - this may not be necessary at all...
+  socket.on('sentence set', function (data) {
+    if (username === data.owner) {
+      disableChat = true;
+    }
+    $sentence.html(data.sentence);
   });
 
   // Whenever the server emits 'user joined', log it in the chat body
@@ -312,7 +377,6 @@ $(function() {
   function addAllUsers(data) {
     $scoreboard.html("");
     for (user in data.usernames) {
-      console.log("in loop" + user);
       var color = getUsernameColor(user);
       var score = Math.floor(Math.random()*100);
       if (user == username) {

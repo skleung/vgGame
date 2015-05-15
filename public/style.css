@@ -8,6 +8,26 @@
   overflow: auto;
 }
 
+.sentence.page .form .sentenceInput {
+  background-color: transparent;
+  border: none;
+  border-bottom: 2px solid #000;
+  outline: none;
+  padding-bottom: 15px;
+  text-align: center;
+  width: 100%;
+}
+
+.sentence.page .form{
+  height: 100px;
+  margin-top: -300px;
+  position: absolute;
+
+  text-align: center;
+  top: 50%;
+  width: 100%;
+}
+
 /* Fix user-agent */
 
 * {
@@ -62,7 +82,7 @@ ul {
   background-color: #000;
 }
 
-.login.page .form {
+.login.page .form{
   height: 100px;
   margin-top: -100px;
   position: absolute;
