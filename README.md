@@ -15,11 +15,11 @@ And point your browser to `http://localhost:4000`.
 
 ## TODO:
 
-- [ ] Add interface for first user to enter a sentence
-- [ ] Cycling through users
+- [x] Add interface for first user to enter a sentence
+- [ ] Cycling through users (Sherman)
 - [ ] Save the sentence that is collected to Redis (Sherman)
-- [ ] Build socket connections to understand when people are hitting words within the sentence
-- [ ] Build out different rooms for chatting
+- [ ] Build socket connections to understand when people are hitting words within the sentence (Kenji)
+- [ ] Build logic to update scoreboard accordingly (Kenji)
 ## Features
 
 - Multiple users can join a chat room by each entering a unique username
