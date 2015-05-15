@@ -95,6 +95,8 @@ $(function() {
       $currentInput = $inputMessage.focus();
 
       log("You set the sentence!");
+      // disable the chatting ability!
+      $inputMessage.prop('disabled', true);
       $sentence.html(sentence);
       // Tell the server who you are and the sentence you set
       data = {
@@ -287,6 +289,23 @@ $(function() {
 
   // Keyboard events
 
+  $(".chat").keydown(function (event) {
+    // Auto-focus the current input when a key is typed
+    if (!(event.ctrlKey || event.metaKey || event.altKey)) {
+      $currentInput.focus();
+    }
+    // When the client hits ENTER on their keyboard
+    if (event.which === 13) {
+      if (username) {
+        sendMessage();
+        socket.emit('stop typing');
+        typing = false;
+      } else {
+        setUsername();
+      }
+    }
+  });
+
   $(".login").keydown(function (event) {
     // Auto-focus the current input when a key is typed
     if (!(event.ctrlKey || event.metaKey || event.altKey)) {
@@ -347,7 +366,9 @@ $(function() {
       $sentenceInput.focus();
     } else {
       $chatPage.show();
-      $sentence.html(data.sentence);
+      log("The sentence has been set - guess away!", {
+        prepend: true
+      });
     }
     addParticipantsMessage(data);
     addAllUsers(data);
@@ -358,13 +379,9 @@ $(function() {
     addChatMessage(data);
   });
 
-  // Whenever the server emits 'create message', set the sentence and enable chat or not
-  // NOTE: Sherman todo - this may not be necessary at all...
+  // Whenever the server emits 'sentence set' we can start the game
   socket.on('sentence set', function (data) {
-    if (username === data.owner) {
-      disableChat = true;
-    }
-    $sentence.html(data.sentence);
+    log(data.owner + " has set the sentence!");
   });
 
   // Whenever the server emits 'user joined', log it in the chat body

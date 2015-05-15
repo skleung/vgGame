@@ -79,7 +79,6 @@ io.on('connection', function (socket) {
     countdown = TIME_LIMIT;
     // echo globally (all clients) that a sentence has been set
     socket.broadcast.emit('sentence set', {
-      sentence: sentence,
       owner: owner
     });
   });
