@@ -1,7 +1,6 @@
-
-
 $(function() {
   // var VG = require('./VG.js');
+  var MIN_NUM_PLAYERS = 4;
   var FADE_TIME = 150; // ms
   var TYPING_TIMER_LENGTH = 400; // ms
   var COLORS = [
@@ -20,6 +19,7 @@ $(function() {
   var $loginPage = $('.login.page'); // The login page
   var $chatPage = $('.chat.page'); // The chatroom page
   var $sentencePage = $('.sentence.page'); // The chatroom page
+  var $waitingPage = $('.waiting.page'); // The waiting page
 
   var $nextButton = $('#next');
   var $sentence = $('#sentence'); // Input message input box
@@ -36,6 +36,7 @@ $(function() {
   var $reset = $("#reset");
   $reset.hide();
   $sentencePage.hide();
+  $waitingPage.hide();
 
   var socket = io();
   socket.on('timer', function (data) {
@@ -361,15 +362,22 @@ $(function() {
       prepend: true
     });
 
-    if (data.sentence === "") {
-      $sentencePage.show();
-      $sentenceInput.focus();
-    } else {
-      $chatPage.show();
-      log("The sentence has been set - guess away!", {
-        prepend: true
-      });
+
+    // if (data.sentence === "") {
+    //   $sentencePage.show();
+    //   $sentenceInput.focus();
+    // } else {
+    //   $chatPage.show();
+    //   log("The sentence has been set - guess away!", {
+    //     prepend: true
+    //   });
+    // }
+    if(data.numUsers < MIN_NUM_PLAYERS){
+      showWaitingPage();
+    }else{
+      showSentencePage();
     }
+
     addParticipantsMessage(data);
     addAllUsers(data);
   });
@@ -389,6 +397,11 @@ $(function() {
     log(data.username + ' joined');
     addParticipantsMessage(data);
     addAllUsers(data);
+    if(data.numUsers < MIN_NUM_PLAYERS){
+      showWaitingPage();
+    }else{
+      showSentencePage();
+    }
   });
 
   function addAllUsers(data) {
@@ -409,6 +422,11 @@ $(function() {
     log(data.username + ' left');
     addParticipantsMessage(data);
     removeChatTyping(data);
+    if(data.numUsers < MIN_NUM_PLAYERS){
+      showWaitingPage();
+    }else{
+      showSentencePage();
+    }
   });
 
   // Whenever the server emits 'typing', show the typing message
@@ -420,4 +438,14 @@ $(function() {
   socket.on('stop typing', function (data) {
     removeChatTyping(data);
   });
+
+  function showWaitingPage(){
+    $waitingPage.show();
+    $sentencePage.hide();
+  }
+  function showSentencePage(){
+    $sentencePage.show();
+    $sentenceInput.focus();
+    $waitingPage.hide();
+  }
 });
