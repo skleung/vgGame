@@ -4,6 +4,7 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 4000;
+var leader_num = 0;
 // Note: this JSON file is cached. So don't run any cron stuff on this script
 // var imageUrls = require('./image.json');
 
@@ -24,6 +25,7 @@ var sentence = "";
 var remainingWords = {};
 
 var TIME_LIMIT = 30;
+var MIN_NUM_USERS = 4;
 // set the timer to 2 minutes
 var countdown = TIME_LIMIT;
 setInterval(function() {
@@ -68,6 +70,17 @@ io.on('connection', function (socket) {
       numUsers: numUsers,
       usernames: usernames
     });
+    if(numUsers < MIN_NUM_USERS){
+      socket.broadcast.emit('wait',{
+        numUsers: numUsers
+      });
+    }else{
+      leader_num = 0;
+      socket.broadcast.emit('start play',{
+        numUsers: numUsers,
+        leader: usernames[leader_num]
+      });
+    }
   });
 
   // when a user create the sentence, we broadcast the set sentence to everyone
@@ -109,6 +122,13 @@ io.on('connection', function (socket) {
         username: socket.username,
         numUsers: numUsers
       });
+
+      if(numUsers < MIN_NUM_USERS){
+        socket.broadcast.emit('wait',{
+          numUsers: numUsers
+        });
+      }
+
     }
   });
 });

@@ -78,7 +78,6 @@ $(function() {
       var score = Math.floor(Math.random()*100);
       $scoreboard.append("<li style='color:"+ color +"'><strong>"+ username + ": "+ score + "</strong></li>");
 
-
       // Tell the server your username
       socket.emit('add user', username);
     }
@@ -362,20 +361,10 @@ $(function() {
       prepend: true
     });
 
-
-    // if (data.sentence === "") {
-    //   $sentencePage.show();
-    //   $sentenceInput.focus();
-    // } else {
-    //   $chatPage.show();
-    //   log("The sentence has been set - guess away!", {
-    //     prepend: true
-    //   });
-    // }
     if(data.numUsers < MIN_NUM_PLAYERS){
       showWaitingPage();
     }else{
-      showSentencePage();
+      // go to guessing
     }
 
     addParticipantsMessage(data);
@@ -397,11 +386,6 @@ $(function() {
     log(data.username + ' joined');
     addParticipantsMessage(data);
     addAllUsers(data);
-    if(data.numUsers < MIN_NUM_PLAYERS){
-      showWaitingPage();
-    }else{
-      showSentencePage();
-    }
   });
 
   function addAllUsers(data) {
@@ -422,10 +406,23 @@ $(function() {
     log(data.username + ' left');
     addParticipantsMessage(data);
     removeChatTyping(data);
-    if(data.numUsers < MIN_NUM_PLAYERS){
-      showWaitingPage();
-    }else{
+  });
+
+  // Whenever the server tells us to wait
+  socket.on('wait', function(data) {
+    showWaitingPage();
+  });
+
+  // Whenever the server tells us that we can play the game
+  socket.on('start play', function(data){
+    console.log('data.leader');
+    if(data.leader == username){
       showSentencePage();
+    }else{ 
+      $chatPage.show();
+      log("The sentence has been set - guess away!", {
+        prepend: true
+      });
     }
   });
 
@@ -442,10 +439,14 @@ $(function() {
   function showWaitingPage(){
     $waitingPage.show();
     $sentencePage.hide();
+    $loginPage.hide();
+    $chatPage.hide();
   }
   function showSentencePage(){
     $sentencePage.show();
     $sentenceInput.focus();
     $waitingPage.hide();
+    $loginPage.hide();
+    $chatPage.hide();
   }
 });
