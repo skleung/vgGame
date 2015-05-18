@@ -415,7 +415,8 @@ $(function() {
 
   // Whenever the server tells us that we can play the game
   socket.on('start play', function(data){
-    console.log('data.leader');
+    console.log(data.leader);
+    console.log(username);
     if(data.leader == username){
       showSentencePage();
     }else{ 

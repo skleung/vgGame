@@ -17,6 +17,7 @@ app.use(express.static(__dirname + '/public'));
 
 // usernames which are currently connected to the chat
 var usernames = {};
+var usernameArr = [];
 var numUsers = 0;
 
 // overhead to track the sentences and the words
@@ -57,6 +58,7 @@ io.on('connection', function (socket) {
     socket.username = username;
     // add the client's username to the global list
     usernames[username] = username;
+    usernameArr.push(username);
     ++numUsers;
     addedUser = true;
     socket.emit('login', {
@@ -76,9 +78,10 @@ io.on('connection', function (socket) {
       });
     }else{
       leader_num = 0;
+      console.log(usernameArr);
       socket.broadcast.emit('start play',{
         numUsers: numUsers,
-        leader: usernames[leader_num]
+        leader: usernameArr[leader_num]
       });
     }
   });
@@ -115,6 +118,7 @@ io.on('connection', function (socket) {
     // remove the username from global usernames list
     if (addedUser) {
       delete usernames[socket.username];
+      usernameArr.splice(usernameArr.indexOf(username),1);
       --numUsers;
 
       // echo globally that this client has left
