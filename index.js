@@ -26,7 +26,7 @@ var sentence = "";
 var remainingWords = {};
 
 var TIME_LIMIT = 30;
-var MIN_NUM_USERS = 4;
+var MIN_NUM_USERS = 2;
 // set the timer to 2 minutes
 var countdown = TIME_LIMIT;
 setInterval(function() {
@@ -79,7 +79,7 @@ io.on('connection', function (socket) {
     }else{
       leader_num = 0;
       console.log(usernameArr);
-      socket.broadcast.emit('start play',{
+      socket.broadcast.emit('start round',{
         numUsers: numUsers,
         leader: usernameArr[leader_num]
       });

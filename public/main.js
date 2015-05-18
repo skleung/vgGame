@@ -1,6 +1,6 @@
 $(function() {
   // var VG = require('./VG.js');
-  var MIN_NUM_PLAYERS = 4;
+  var MIN_NUM_PLAYERS = 2;
   var FADE_TIME = 150; // ms
   var TYPING_TIMER_LENGTH = 400; // ms
   var COLORS = [
@@ -365,6 +365,7 @@ $(function() {
       showWaitingPage();
     }else{
       // go to guessing
+      showChatPage();
     }
 
     addParticipantsMessage(data);
@@ -414,14 +415,14 @@ $(function() {
   });
 
   // Whenever the server tells us that we can play the game
-  socket.on('start play', function(data){
+  socket.on('start round', function(data){
     console.log(data.leader);
     console.log(username);
     if(data.leader == username){
       showSentencePage();
     }else{
       showChatPage();
-      log("The sentence has been set - guess away!", {
+      log(data.leader + " is currently setting the sentence.", {
         prepend: true
       });
     }
