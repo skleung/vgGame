@@ -50,10 +50,6 @@ $(function() {
     }
   });
 
-  socket.on('guess', function(data){
-
-  });
-
   $reset.click(function() {
       $reset.hide()
       socket.emit('reset');
@@ -369,6 +365,7 @@ $(function() {
   // Whenever the server emits 'sentence set' we can start the game
   socket.on('sentence set', function (data) {
     log(data.owner + " has set the sentence!");
+    $inputMessage.prop('disabled', false);
     updateState(data);
   });
 

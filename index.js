@@ -33,7 +33,13 @@ var sentenceMap = {};
 var sentence = "";
 var sentenceArr = [];
 var sentenceState = [];
-var remainingWords = {};
+function clearState(){
+  freqMap = {};
+  sentenceMap = {};
+  sentence = "";
+  sentenceArr = [];
+  sentenceState = [];
+}
 
 var TIME_LIMIT = 30;
 var MIN_NUM_USERS = 3;
@@ -60,18 +66,18 @@ setInterval(function() {
       console.log("timer ran out! saved sentence: " + sentence);
     });
 
-    // toggle leader/guessing
+    // if time ever goes to zero, start around
+    leader_num = (leader_num + 1) % numUsers;
+    io.sockets.emit('start round',{
+      numUsers: numUsers,
+      leader: usernameArr[leader_num]
+    });
+
     if(settingSentence){
-      io.sockets.emit('guess',{});
+      // TODO: message that the leader did not set the message
     }
-    else{
-      leader_num = (leader_num + 1) % numUsers;
-      socket.broadcast.emit('start round',{
-        numUsers: numUsers,
-        leader: usernameArr[leader_num]
-      });
-    }
-    settingSentence = !settingSentence;
+    
+    settingSentence = true;
   }
   io.sockets.emit('timer', { countdown: countdown });
 }, 1000);
@@ -163,10 +169,12 @@ io.on('connection', function (socket) {
 
   // when a user create the sentence, we broadcast the set sentence to everyone
   socket.on('create sentence', function (data) {
+    clearState();
     // set the owner of the sentence
     owner = data.username;
     sentence = data.sentence;
     sentenceArr = sentence.split(/[ ,]+/);
+    
     for (var i = 0; i < sentenceArr.length; i++) {
       word = sentenceArr[i];
       sentenceMap[word] = true;
