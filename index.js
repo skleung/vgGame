@@ -52,8 +52,7 @@ var countdown = 0;
 var keepCounting = true
 
 function startRound() {
-  // if time ever goes to zero, start around
-  imageIndex++;
+  imageIndex = Math.floor(Math.random() * imageUrls.length);
   leader_num = (leader_num + 1) % numUsers;
   io.sockets.emit('start round',{
     numUsers: numUsers,
@@ -166,7 +165,8 @@ io.on('connection', function (socket) {
     });
     if(numUsers < MIN_NUM_USERS){
       socket.emit('wait',{
-        numUsers: numUsers
+        numUsers: numUsers,
+        usernames: usernameArr
       });
     }else{
       leader_num = 0;

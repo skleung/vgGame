@@ -20,6 +20,8 @@ $(function() {
   var $chatPage = $('.chat.page'); // The chatroom page
   var $sentencePage = $('.sentence.page'); // The chatroom page
   var $waitingPage = $('.waiting.page'); // The waiting page
+  var $waitingMessage= $('#waitingMessage'); // The waiting page
+  var $waitingUsers= $('#waitingUsers'); // The waiting page
 
   var $nextButton = $('#next');
   var $sentence = $('#sentence'); // Input message input box
@@ -75,8 +77,8 @@ $(function() {
       $currentInput = $inputMessage.focus();
 
       var color = getUsernameColor(username);
-      var score = Math.floor(Math.random()*100);
-      $scoreboard.append("<li style='color:"+ color +"'><strong>"+ username + ": "+ score + "</strong></li>");
+      var score = 0;
+      $scoreboard.append("<li style='color:"+ color +"'><b>"+ username + ": "+ score + "</b></li>");
 
       // Tell the server your username
       socket.emit('add user', username);
@@ -386,11 +388,13 @@ $(function() {
       var color = getUsernameColor(user);
       var score = data.scores[user];
       if (user == username) {
-        $scoreboard.append("<li style='color:"+ color +"'><strong>"+ user + ": "+ score + "</strong></li>");
+        $scoreboard.append("<li id='" + user + "Score' style='color:"+ color +"'><strong>"+ user + ": "+ score + "</strong></li>");
       } else {
-        $scoreboard.append("<li style='color:"+ color +"'>"+ user + ": "+ score + "</li>");
+        $scoreboard.append("<li id='" + user + "Score' style='color:"+ color +"'>"+ user + ": "+ score + "</li>");
       }
     }
+    // animate the score of the person who just scored
+    $("#" + data.username + "Score").addClass("animated bounce");
   }
 
   // Whenever the server emits 'user left', log it in the chat body
@@ -403,7 +407,7 @@ $(function() {
 
   // Whenever the server tells us to wait
   socket.on('wait', function (data) {
-    showWaitingPage();
+    showWaitingPage(data);
   });
 
   // Whenever a user hits a word by themselves
@@ -423,7 +427,6 @@ $(function() {
   socket.on('start round', function(data){
     console.log(data);
     console.log("starting round");
-    debugger
     $(".curImage").attr('src', data.imageUrl);
     if(data.leader == username){
       showSentencePage();
@@ -452,7 +455,19 @@ $(function() {
     $sentencePage.hide();
   }
 
-  function showWaitingPage(){
+  function showWaitingPage(data){
+    if (data.numUsers === 1) {
+      $waitingMessage.text("You're the only one in the room right now - share it with your friends!")
+    } else {
+      $waitingMessage.html("There are " + data.numUsers + " players in the room right now: ");
+      var usernameHTML = "";
+      for (var i=0; i<data.usernames.length; i++) {
+        var username = data.usernames[i];
+        var color = getUsernameColor(username);
+        usernameHTML += "<strong style='color:" + color + "'> " + username + " </strong> "
+      }
+      $waitingUsers.html(usernameHTML);
+    }
     $waitingPage.show();
     $sentencePage.hide();
     $loginPage.hide();
