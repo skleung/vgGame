@@ -1,6 +1,6 @@
 $(function() {
   // var VG = require('./VG.js');
-  var MIN_NUM_PLAYERS = 4;
+  var MIN_NUM_PLAYERS = 2;
   var FADE_TIME = 150; // ms
   var TYPING_TIMER_LENGTH = 400; // ms
   var COLORS = [
@@ -168,21 +168,7 @@ $(function() {
       options.fade = false;
       $typingMessages.remove();
     }
-    // if (username !== data.username) {
-    //   console.log("pushing " + data.message);
-    //   storeSentences(getSentences().push(data.message));
-    //   return;
-    // } else {
-    //   var mySentence = data.message;
-    //   var otherSentences = []// getSentences(); //this is an array of sentences
-    //   console.log("found: " + otherSentences);
-    //   $(otherSentences).each(function() {
-    //     var score = VG.bleu_score($(this), mySentence, 3);
-    //     console.log(score);
-    //   });
-    //   // run BLEU score here for my sentence against all the other ones
 
-    // }
     var $usernameDiv = $('<span class="username"/>')
       .text(data.username)
       .css('color', getUsernameColor(data.username));
@@ -368,7 +354,7 @@ $(function() {
     }
 
     addParticipantsMessage(data);
-    addAllUsers(data);
+    updateScores(data, false);
   });
 
   // Whenever the server emits 'new message', update the chat body
@@ -385,14 +371,14 @@ $(function() {
   socket.on('user joined', function (data) {
     log(data.username + ' joined');
     addParticipantsMessage(data);
-    addAllUsers(data);
+    updateScores(data);
   });
 
-  function addAllUsers(data) {
+  function updateScores(data, animated) {
     $scoreboard.html("");
-    for (user in data.usernames) {
+    for (user in data.scores) {
       var color = getUsernameColor(user);
-      var score = Math.floor(Math.random()*100);
+      var score = data.scores[user];
       if (user == username) {
         $scoreboard.append("<li style='color:"+ color +"'><strong>"+ user + ": "+ score + "</strong></li>");
       } else {
@@ -404,19 +390,29 @@ $(function() {
   // Whenever the server emits 'user left', log it in the chat body
   socket.on('user left', function (data) {
     log(data.username + ' left');
+    updateScores(data, false);
     addParticipantsMessage(data);
     removeChatTyping(data);
   });
 
   // Whenever the server tells us to wait
-  socket.on('wait', function(data) {
+  socket.on('wait', function (data) {
     showWaitingPage();
   });
 
+  // Whenever a user hits a word by themselves
+  socket.on('hit word', function (data) {
+    log("Congrats - you guessed " + data.word);
+    updateScores(data, true);
+  });
+
+  socket.on('update state', function(data) {
+    log(data.username + "correctly guessed " + data.word) + "!";
+    updateScores(data, true);
+  });
+
   // Whenever the server tells us that we can play the game
-  socket.on('start play', function(data){
-    console.log(data.leader);
-    console.log(username);
+  socket.on('start play', function (data){
     if(data.leader == username){
       showSentencePage();
     }else{
