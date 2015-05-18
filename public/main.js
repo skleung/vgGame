@@ -90,7 +90,7 @@ $(function() {
     // If the username is valid
     if (sentence) {
       $sentencePage.fadeOut();
-      $chatPage.show();
+      showChatPage();
       $sentencePage.off('click');
       $currentInput = $inputMessage.focus();
 
@@ -351,6 +351,7 @@ $(function() {
       showWaitingPage();
     }else{
       // go to guessing
+      showChatPage();
     }
 
     addParticipantsMessage(data);
@@ -365,6 +366,7 @@ $(function() {
   // Whenever the server emits 'sentence set' we can start the game
   socket.on('sentence set', function (data) {
     log(data.owner + " has set the sentence!");
+    updateState(data);
   });
 
   // Whenever the server emits 'user joined', log it in the chat body
@@ -373,6 +375,10 @@ $(function() {
     addParticipantsMessage(data);
     updateScores(data);
   });
+
+  function updateState(data) {
+    $sentence.html(data.state.join([separator = ' ']));
+  }
 
   function updateScores(data, animated) {
     $scoreboard.html("");
@@ -404,20 +410,22 @@ $(function() {
   socket.on('hit word', function (data) {
     log("Congrats - you guessed " + data.word);
     updateScores(data, true);
+    updateState(data);
   });
 
-  socket.on('update state', function(data) {
+  socket.on('update score', function(data) {
     log(data.username + "correctly guessed " + data.word) + "!";
     updateScores(data, true);
+    updateState(data);
   });
 
   // Whenever the server tells us that we can play the game
-  socket.on('start play', function (data){
+  socket.on('start round', function(data){
     if(data.leader == username){
       showSentencePage();
     }else{
-      $chatPage.show();
-      log("The sentence has been set - guess away!", {
+      showChatPage();
+      log(data.leader + " is currently setting the sentence.", {
         prepend: true
       });
     }
@@ -432,6 +440,13 @@ $(function() {
   socket.on('stop typing', function (data) {
     removeChatTyping(data);
   });
+
+  function showChatPage(){
+    $waitingPage.hide();
+    $chatPage.show();
+    $loginPage.hide();
+    $sentencePage.hide();
+  }
 
   function showWaitingPage(){
     $waitingPage.show();

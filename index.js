@@ -50,19 +50,18 @@ io.on('connection', function (socket) {
 
   // when the client emits 'new message', this listens and executes
   socket.on('new message', function (data) {
-
     // update the frequency map
     if (data in freqMap) {
       freqMap[data]++;
     } else {
       freqMap[data] = 1;
     }
-
     if (data in sentenceMap) {
       if (freqMap[data] == 1) {
         // first hit scores a point
         scores[socket.username]++;
         updateState(data);
+
         socket.broadcast.emit('update score', {
           username: socket.username,
           word: data,
@@ -75,6 +74,7 @@ io.on('connection', function (socket) {
           word: data
         })
       } else {
+
         // hit word, but no score
         socket.emit('miss word', {
           word: data
@@ -115,8 +115,7 @@ io.on('connection', function (socket) {
       });
     }else{
       leader_num = 0;
-      console.log(usernameArr);
-      socket.broadcast.emit('start play',{
+      socket.broadcast.emit('start round',{
         numUsers: numUsers,
         leader: usernameArr[leader_num]
       });
@@ -128,17 +127,17 @@ io.on('connection', function (socket) {
     // set the owner of the sentence
     owner = data.username;
     sentence = data.sentence;
-    sentenceArr = sentence.split();
+    sentenceArr = sentence.split(/[ ,]+/);
     for (var i = 0; i < sentenceArr.length; i++) {
       word = sentenceArr[i];
       sentenceMap[word] = true;
-      sentenceState.push("");
+      sentenceState.push("_____");
     }
-    var randWord = Math.floor((Math.random() * sentenceArr.length) + 1);
-    while (stopWords.indexOf(randWord) >= 0) {
-      randWord = Math.floor((Math.random() * sentenceArr.length) + 1);
+    var startingWord = Math.floor((Math.random() * sentenceArr.length) + 1);
+    while (stopWords.indexOf(startingWord) >= 0) {
+      startingWord = Math.floor((Math.random() * sentenceArr.length) + 1);
     }
-    updateState(word);
+    updateState(startingWord);
     // reset timer when the sentence is created
     countdown = TIME_LIMIT;
     // echo globally (all clients) that a sentence has been set
@@ -149,7 +148,7 @@ io.on('connection', function (socket) {
   });
 
   function updateState(word) {
-    for (var i = 0; i< sentenceArr.lenght; i++) {
+    for (var i = 0; i< sentenceArr.length; i++) {
       if (sentenceArr[i] === word) {
         sentenceState[i] = sentenceArr[i];
       }
@@ -175,7 +174,7 @@ io.on('connection', function (socket) {
     // remove the username from global scores list
     if (addedUser) {
       delete scores[socket.username];
-      usernameArr.splice(usernameArr.indexOf(socket.username),1);
+      usernameArr.splice(usernameArr.indexOf(socket.username), 1);
       --numUsers;
 
       // echo globally that this client has left
