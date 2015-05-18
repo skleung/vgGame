@@ -50,6 +50,10 @@ $(function() {
     }
   });
 
+  socket.on('guess', function(data){
+
+  });
+
   $reset.click(function() {
       $reset.hide()
       socket.emit('reset');
@@ -364,7 +368,6 @@ $(function() {
     if(data.numUsers < MIN_NUM_PLAYERS){
       showWaitingPage();
     }else{
-      // go to guessing
       showChatPage();
     }
 

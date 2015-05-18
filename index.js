@@ -27,10 +27,23 @@ var remainingWords = {};
 
 var TIME_LIMIT = 30;
 var MIN_NUM_USERS = 2;
-// set the timer to 2 minutes
-var countdown = TIME_LIMIT;
+var countdown = 0;
+var settingSentence = true;
+
 setInterval(function() {
   countdown--;
+  if(countdown == 0){
+    if(settingSentence){
+      io.sockets.emit('guess',{});
+    } else{
+      leader_num = (leader_num + 1) % numUsers;
+      socket.broadcast.emit('start round',{
+        numUsers: numUsers,
+        leader: usernameArr[leader_num]
+      });
+    }
+    settingSentence = !settingSentence;
+  }
   io.sockets.emit('timer', { countdown: countdown });
 }, 1000);
 
@@ -78,7 +91,6 @@ io.on('connection', function (socket) {
       });
     }else{
       leader_num = 0;
-      console.log(usernameArr);
       socket.broadcast.emit('start round',{
         numUsers: numUsers,
         leader: usernameArr[leader_num]
