@@ -1,11 +1,28 @@
+.centered {
+  position: absolute;
+  left: 50%;
+  margin-left: -300px;
+  width: 600px;
+  top: 45%;
+}
+
+.centered .title {
+  font-weight: 300;
+}
 
 #scoreboard {
   font-size: 18px;
   list-style:none;
   padding-left:0;
 }
+
 .messages {
   overflow: auto;
+}
+
+.waiting.page {
+  background-color: #000;
+  color: white;
 }
 
 .sentence.page .form .sentenceInput {

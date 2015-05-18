@@ -7,6 +7,14 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div id="fb-root"></div>
+  <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3&appId=934380689946663";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));</script>
   <ul class="pages">
     <li class="chat page">
       <div class="container" style="margin-top:80px">
@@ -57,7 +65,12 @@
       </div>
     </li>
     <li class="waiting page">
-        <h3 class="title">Waiting for players...</h3>
+      <div class="centered">
+        <h3 class="title text-center">Waiting for other players...</h3>
+        <p class="text-center">
+          <div class="fb-share-button" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count"></div>
+        </p>
+      </div>
     </li>
   </ul>
 

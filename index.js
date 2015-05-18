@@ -8,7 +8,7 @@ var Parse = require('parse').Parse;
 var leader_num = 0;
 
 // Note: this JSON file is cached. So don't run any cron stuff on this script
-var imageUrls = require('./image.json');
+var imageUrls = require('./images.json');
 var stopWords = require('stopwords').english;
 
 // initialize Parse
@@ -50,13 +50,14 @@ setInterval(function() {
     var newAnnotation = new Annotation();
     var data = {
       sentence: sentence,
+      pk: imageUrls[imageIndex]["pk"],
       frequencyMap: JSON.stringify(freqMap),
       imageURL: imageUrls[imageIndex]["image"],
       gameFinished: false
     }
     newAnnotation.save(data).then(function(object) {
       console.log("timer ran out! saved sentence: " + sentence);
-      // actually transition to the next round here...
+      // TODO: actually transition to the next round here...
     });
   }
   io.sockets.emit('timer', { countdown: countdown });
