@@ -90,7 +90,7 @@ $(function() {
     // If the username is valid
     if (sentence) {
       $sentencePage.fadeOut();
-      $chatPage.show();
+      showChatPage();
       $sentencePage.off('click');
       $currentInput = $inputMessage.focus();
 
@@ -420,7 +420,7 @@ $(function() {
     if(data.leader == username){
       showSentencePage();
     }else{
-      $chatPage.show();
+      showChatPage();
       log("The sentence has been set - guess away!", {
         prepend: true
       });
@@ -436,6 +436,13 @@ $(function() {
   socket.on('stop typing', function (data) {
     removeChatTyping(data);
   });
+
+  function showChatPage(){
+    $waitingPage.hide();
+    $chatPage.show();
+    $loginPage.hide();
+    $sentencePage.hide();
+  }
 
   function showWaitingPage(){
     $waitingPage.show();
