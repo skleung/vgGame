@@ -350,7 +350,6 @@ $(function() {
     if(data.numUsers < MIN_NUM_PLAYERS){
       showWaitingPage();
     }else{
-      // go to guessing
       showChatPage();
     }
 
@@ -366,6 +365,7 @@ $(function() {
   // Whenever the server emits 'sentence set' we can start the game
   socket.on('sentence set', function (data) {
     log(data.owner + " has set the sentence!");
+    $inputMessage.prop('disabled', false);
     updateState(data);
   });
 
@@ -421,6 +421,10 @@ $(function() {
 
   // Whenever the server tells us that we can play the game
   socket.on('start round', function(data){
+    console.log(data);
+    console.log("starting round");
+    debugger
+    $(".curImage").attr('src', data.imageUrl);
     if(data.leader == username){
       showSentencePage();
     }else{
