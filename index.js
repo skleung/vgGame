@@ -4,10 +4,15 @@ var app = express();
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var port = process.env.PORT || 4000;
+var Parse = require('parse').Parse;
 var leader_num = 0;
+
 // Note: this JSON file is cached. So don't run any cron stuff on this script
-// var imageUrls = require('./image.json');
+var imageUrls = require('./image.json');
 var stopWords = require('stopwords').english;
+
+// initialize Parse
+Parse.initialize("1k6XMysYQDS6Omh4nnnp7O4JkBh8vxeZfB8Q5w9e", "3NAHJYizOU4gfR7fesQXBEpQaXcW08peQugNLnfr");
 
 server.listen(port, function () {
   console.log('Server listening at port %d', port);
@@ -20,6 +25,7 @@ app.use(express.static(__dirname + '/public'));
 var scores = {};
 var usernameArr = [];
 var numUsers = 0;
+var imageIndex = 0;
 
 // overhead to track the sentences and the words
 var freqMap = {};
@@ -30,12 +36,29 @@ var sentenceState = [];
 var remainingWords = {};
 
 var TIME_LIMIT = 30;
-var MIN_NUM_USERS = 2;
+var MIN_NUM_USERS = 3;
 
 // set the timer to 30 seconds
 var countdown = 0;
+var keepCounting = true
+
 setInterval(function() {
+  if (!keepCounting) return;
   countdown--;
+  if (countdown == 0) {
+    var Annotation = Parse.Object.extend("Annotation");
+    var newAnnotation = new Annotation();
+    var data = {
+      sentence: sentence,
+      frequencyMap: JSON.stringify(freqMap),
+      imageURL: imageUrls[imageIndex]["image"],
+      gameFinished: false
+    }
+    newAnnotation.save(data).then(function(object) {
+      console.log("timer ran out! saved sentence: " + sentence);
+      // actually transition to the next round here...
+    });
+  }
   io.sockets.emit('timer', { countdown: countdown });
 }, 1000);
 
@@ -44,6 +67,7 @@ io.on('connection', function (socket) {
 
   socket.on('reset', function (data) {
     countdown = TIME_LIMIT;
+    keepCounting = true;
     sentence = "";
     io.sockets.emit('timer', { countdown: countdown });
   });
@@ -51,6 +75,7 @@ io.on('connection', function (socket) {
   // when the client emits 'new message', this listens and executes
   socket.on('new message', function (data) {
     // update the frequency map
+    data = data.trim();
     if (data in freqMap) {
       freqMap[data]++;
     } else {
@@ -153,6 +178,29 @@ io.on('connection', function (socket) {
         sentenceState[i] = sentenceArr[i];
       }
     }
+
+    // Game ends when we find no more blanks
+    if (sentenceState.indexOf("_____") < 0) {
+      keepCounting = false;
+      endGame(true);
+    }
+  }
+
+  /** This function saves the sentence and the frequency map to the database
+    */
+  function endGame(finished) {
+    var Annotation = Parse.Object.extend("Annotation");
+    var newAnnotation = new Annotation();
+    var data = {
+      sentence: sentence,
+      frequencyMap: JSON.stringify(freqMap),
+      imageURL: imageUrls[imageIndex]["image"],
+      gameFinished: finished
+    }
+    newAnnotation.save(data).then(function(object) {
+      console.log("saved sentence: " + sentence);
+      // actually transition to the next round here...
+    });
   }
 
   // when the client emits 'typing', we broadcast it to others

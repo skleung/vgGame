@@ -1,6 +1,6 @@
 $(function() {
   // var VG = require('./VG.js');
-  var MIN_NUM_PLAYERS = 2;
+  var MIN_NUM_PLAYERS = 3;
   var FADE_TIME = 150; // ms
   var TYPING_TIMER_LENGTH = 400; // ms
   var COLORS = [
