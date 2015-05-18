@@ -419,7 +419,7 @@ $(function() {
     console.log(username);
     if(data.leader == username){
       showSentencePage();
-    }else{ 
+    }else{
       $chatPage.show();
       log("The sentence has been set - guess away!", {
         prepend: true
