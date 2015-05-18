@@ -71,7 +71,7 @@ io.on('connection', function (socket) {
       usernames: usernames
     });
     if(numUsers < MIN_NUM_USERS){
-      socket.broadcast.emit('wait',{
+      socket.emit('wait',{
         numUsers: numUsers
       });
     }else{
