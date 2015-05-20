@@ -16,6 +16,8 @@
     "socket.io-adapter": "automattic/socket.io-adapter#de5cba",
     "socket.io-client": "automattic/socket.io-client#210d65",
     "socket.io-parser": "2.2.3",
+    "underscore": "~1.5.1",
+    "mustache": "~0.7.2",
     "stopwords": "0.0.4"
   }
 }

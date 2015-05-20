@@ -105,34 +105,38 @@ io.on('connection', function (socket) {
   socket.on('new message', function (data) {
     // update the frequency map
     data = data.trim();
-    if (data in freqMap) {
-      freqMap[data]++;
-    } else {
-      freqMap[data] = 1;
-    }
-    if (data in sentenceMap) {
-      if (freqMap[data] == 1) {
-        // first hit scores a point
-        scores[socket.username]++;
-        updateState(data);
-
-        socket.broadcast.emit('update score', {
-          username: socket.username,
-          word: data,
-          state: sentenceState,
-          scores: scores
-        });
-        socket.emit('hit word', {
-          scores: scores,
-          state: sentenceState,
-          word: data
-        })
+    var wordArray = data.split(" ");
+    for (var i=0; i<wordArray.length; i++) {
+      var word = wordArray[i];
+      if (word in freqMap) {
+        freqMap[word]++;
       } else {
+        freqMap[word] = 1;
+      }
+      if (word in sentenceMap) {
+        if (freqMap[word] == 1) {
+          // first hit scores a point
+          scores[socket.username]++;
+          updateState(word);
 
-        // hit word, but no score
-        socket.emit('miss word', {
-          word: data
-        });
+          socket.broadcast.emit('update score', {
+            username: socket.username,
+            word: word,
+            state: sentenceState,
+            scores: scores
+          });
+          socket.emit('hit word', {
+            scores: scores,
+            state: sentenceState,
+            word: word
+          })
+        } else {
+
+          // hit word, but no score
+          socket.emit('miss word', {
+            word: word
+          });
+        }
       }
     }
 
