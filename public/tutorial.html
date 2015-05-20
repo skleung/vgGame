@@ -384,12 +384,7 @@ Reveal.addEventListener( 'customevent', function() {
 
 		<script>
 			console.log(localStorage.getItem("seenVGgameTutorial"));
-			if (localStorage.getItem("seenVGgameTutorial") === null) {
-				localStorage.setItem("seenVGgameTutorial", true);
-			} else {
-				console.log("here!");
-				window.location = "http://google.com";
-			}
+
 			// Full list of configuration options available at:
 			// https://github.com/hakimel/reveal.js#configuration
 			Reveal.initialize({

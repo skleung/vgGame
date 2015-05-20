@@ -425,9 +425,23 @@ $(function() {
 
   // Whenever the server tells us that we can play the game
   socket.on('start round', function(data){
-    console.log(data);
-    console.log("starting round");
     $(".curImage").attr('src', data.imageUrl);
+    // resize image appropriately
+    var fillClass = ($(".curImage").height() > $(".curImage").width()) ? 'fillheight' : 'fillwidth';
+    $(".curImage").removeClass('fillheight');
+    $(".curImage").removeClass('fillwidth');
+    $(".curImage").addClass(fillClass);
+
+    // center the image
+    // setTimeout(function(){
+    //   $('.curImage').attr('style', '');
+    //   $(".curImage").css('position', 'relative');
+    //   $(".curImage").css('left', '50%');
+    //   console.log("width = " + $(".curImage").width());
+    //   console.log("half = " + $(".curImage").width()/2.0);
+    //   $(".curImage").css('margin-left', "-"+ $(".curImage").width()/2.0+'px');
+    // }, 0);
+
     if(data.leader == username){
       showSentencePage();
     }else{

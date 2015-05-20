@@ -18,7 +18,7 @@
   }(document, 'script', 'facebook-jssdk'));</script>
   <ul class="pages">
     <li class="chat page">
-      <div class="container" style="margin-top:80px">
+      <div class="container" style="margin-top:40px">
         <div class="row">
           <div class="pictureArea col-md-6">
             <div class="row">
@@ -29,8 +29,13 @@
               <h2 id="counter"></h2>
             </div>
           </div>
-          <div class="chatArea col-md-4">
-            <ul class="messages"></ul>
+          <div class="col-md-4">
+            <div class="chatArea row">
+              <ul class="messages"></ul>
+            </div>
+            <div class="row">
+              <input class="inputMessage" style="width: 100%" placeholder="Type here..."/>
+            </div>
           </div>
           <div class="pointArea col-md-2">
             <h3>Scoreboard</h3>
@@ -38,14 +43,11 @@
             </ul>
           </div>
         </div>
-        <div class="row">
-          <input class="inputMessage col-md-offset-6 col-md-4" placeholder="Type here..."/>
-        </div>
       </div>
     </li>
     <li class="sentence page">
       <div class="form">
-        <div class="row text-center">
+        <div class="row">
           <div class="col-md-6 col-md-offset-3">
             <img class="img-responsive curImage"/>
           </div>

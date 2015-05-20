@@ -6,6 +6,16 @@
   top: 45%;
 }
 
+.fillheight{
+  width: auto;
+  height: 500px;
+}
+
+.fillwidth{
+  height: 500px;
+  width: auto;
+}
+
 .centered p {
   font-size: 24px;
 }
@@ -159,7 +169,7 @@ ul {
 /* Messages */
 
 .chatArea {
-  height: 500px;
+  height: 560px;
   overflow-y: scroll;
   padding-bottom: 60px;
 }
