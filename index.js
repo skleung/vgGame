@@ -116,7 +116,11 @@ io.on('connection', function (socket) {
       if (word in sentenceMap) {
         if (freqMap[word] == 1) {
           // first hit scores a point
-          scores[socket.username]++;
+          if (stopWords.indexOf(word) >= 0) {
+            scores[socket.username]++;
+          } else {
+            scores[socket.username]+=5;
+          }
           updateState(word);
 
           socket.broadcast.emit('update score', {
@@ -127,6 +131,7 @@ io.on('connection', function (socket) {
           });
           socket.emit('hit word', {
             scores: scores,
+            username: socket.username,
             state: sentenceState,
             word: word
           })
@@ -195,9 +200,9 @@ io.on('connection', function (socket) {
       sentenceMap[word] = true;
       sentenceState.push("_____");
     }
-    var startingWord = Math.floor((Math.random() * sentenceArr.length) + 1);
+    var startingWord = sentenceArr[Math.floor((Math.random() * sentenceArr.length))];
     while (stopWords.indexOf(startingWord) >= 0) {
-      startingWord = Math.floor((Math.random() * sentenceArr.length) + 1);
+      startingWord = sentenceArr[Math.floor((Math.random() * sentenceArr.length))];
     }
     updateState(startingWord);
     // reset timer when the sentence is created
