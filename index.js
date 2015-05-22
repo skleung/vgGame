@@ -42,7 +42,7 @@ function clearState(){
   sentenceState = [];
 }
 
-var TIME_LIMIT = 7;
+var TIME_LIMIT = 30;
 var MIN_NUM_USERS = 3;
 var settingSentence = true;
 var shouldShowResults = true;
