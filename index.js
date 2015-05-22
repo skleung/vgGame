@@ -42,9 +42,10 @@ function clearState(){
   sentenceState = [];
 }
 
-var TIME_LIMIT = 30;
+var TIME_LIMIT = 7;
 var MIN_NUM_USERS = 3;
 var settingSentence = true;
+var shouldShowResults = true;
 
 
 // set the timer to 30 seconds
@@ -52,6 +53,7 @@ var countdown = 0;
 var keepCounting = true
 
 function startRound() {
+
   imageIndex = Math.floor(Math.random() * imageUrls.length);
   leader_num = (leader_num + 1) % numUsers;
   io.sockets.emit('start round',{
@@ -60,27 +62,49 @@ function startRound() {
     leader: usernameArr[leader_num]
   });
   countdown = 0;
+  shouldShowResults = true;
   keepCounting = true;
+}
+
+function saveAndShowResults(success) {
+  var Annotation = Parse.Object.extend("Annotation");
+  var newAnnotation = new Annotation();
+  var data = {
+    sentence: sentence,
+    pk: imageUrls[imageIndex]["pk"],
+    frequencyMap: JSON.stringify(freqMap),
+    imageURL: imageUrls[imageIndex]["image"],
+    gameFinished: success
+  }
+
+  newAnnotation.save(data).then(function(object) {
+    if (success) {
+      console.log("sentence successfully guessed! " + sentence);
+    } else {
+      console.log("timer ran out! saved sentence: " + sentence);
+    }
+  });
+
+  io.sockets.emit('show results', {
+    lastSentence: sentence,
+    lastImageUrl: imageUrls[imageIndex]["image"],
+    success: success
+  });
+  countdown = 5;
+  shouldShowResults = false;
 }
 
 setInterval(function() {
   if (!keepCounting) return;
   countdown--;
   if (countdown == 0) {
-    var Annotation = Parse.Object.extend("Annotation");
-    var newAnnotation = new Annotation();
-    var data = {
-      sentence: sentence,
-      pk: imageUrls[imageIndex]["pk"],
-      frequencyMap: JSON.stringify(freqMap),
-      imageURL: imageUrls[imageIndex]["image"],
-      gameFinished: false
+    if (shouldShowResults) {
+      // save the sentence to parse
+      // show results
+      saveAndShowResults(false);
+    } else {
+      startRound();
     }
-    newAnnotation.save(data).then(function(object) {
-      console.log("timer ran out! saved sentence: " + sentence);
-    });
-
-    startRound();
 
     if(settingSentence){
       // TODO: message that the leader did not set the message
@@ -93,13 +117,6 @@ setInterval(function() {
 
 io.on('connection', function (socket) {
   var addedUser = false;
-
-  socket.on('reset', function (data) {
-    countdown = TIME_LIMIT;
-    keepCounting = true;
-    sentence = "";
-    io.sockets.emit('timer', { countdown: countdown });
-  });
 
   // when the client emits 'new message', this listens and executes
   socket.on('new message', function (data) {
@@ -164,6 +181,7 @@ io.on('connection', function (socket) {
     socket.emit('login', {
       numUsers: numUsers,
       scores: scores,
+      usernames: usernameArr,
       sentence: sentence
     });
     // echo globally (all clients) that a person has connected
@@ -179,6 +197,7 @@ io.on('connection', function (socket) {
       });
     }else{
       leader_num = 0;
+      shouldShowResults = true;
       io.sockets.emit('start round',{
         numUsers: numUsers,
         imageUrl: imageUrls[imageIndex]["image"],
@@ -223,27 +242,8 @@ io.on('connection', function (socket) {
 
     // Game ends when we find no more blanks
     if (sentenceState.indexOf("_____") < 0) {
-      keepCounting = false;
-      winGame();
+      saveAndShowResults(true);
     }
-  }
-
-  /** This function saves the sentence and the frequency map to the database
-    */
-  function winGame() {
-    var Annotation = Parse.Object.extend("Annotation");
-    var newAnnotation = new Annotation();
-    var data = {
-      sentence: sentence,
-      frequencyMap: JSON.stringify(freqMap),
-      imageURL: imageUrls[imageIndex]["image"],
-      gameFinished: true
-    }
-    newAnnotation.save(data).then(function(object) {
-      console.log("saved sentence: " + sentence);
-      // actually transition to the next round here...
-    });
-    startRound();
   }
 
   // when the client emits 'typing', we broadcast it to others

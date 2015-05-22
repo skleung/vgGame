@@ -20,12 +20,18 @@ $(function() {
   var $chatPage = $('.chat.page'); // The chatroom page
   var $sentencePage = $('.sentence.page'); // The chatroom page
   var $waitingPage = $('.waiting.page'); // The waiting page
+  var $resultsPage = $('.results.page'); // The waiting page
   var $waitingMessage= $('#waitingMessage'); // The waiting page
   var $waitingUsers= $('#waitingUsers'); // The waiting page
 
   var $nextButton = $('#next');
   var $sentence = $('#sentence'); // Input message input box
+  var $lastSentence = $('#lastSentence');
+  var $success = $('#success');
+  var $failure = $('#failure');
+  var $lastImage = $('#lastImage');
   var $scoreboard = $('#scoreboard');
+  var $counter = $('.counter');
 
   // Prompt for setting a username
   var username;
@@ -38,17 +44,18 @@ $(function() {
   var $reset = $("#reset");
   $reset.hide();
   $sentencePage.hide();
+  $resultsPage.hide();
   $waitingPage.hide();
 
   var socket = io();
   socket.on('timer', function (data) {
-    $('#counter').html(data.countdown);
+    $counter.html(data.countdown);
     if (data.countdown <= 0) {
-      $('#counter').html(0);
-      $('#counter').css("color", "red");
+      $counter.html(0);
+      $counter.css("color", "red");
       $reset.fadeIn();
     } else {
-      $('#counter').css("color", "#aaa");
+      $counter.css("color", "#aaa");
     }
   });
 
@@ -350,7 +357,7 @@ $(function() {
     });
 
     if(data.numUsers < MIN_NUM_PLAYERS){
-      showWaitingPage();
+      showWaitingPage(data);
     }else{
       showChatPage();
     }
@@ -379,6 +386,7 @@ $(function() {
   });
 
   function updateState(data) {
+    $sentence.empty();
     $sentence.html(data.state.join([separator = ' ']));
   }
 
@@ -423,8 +431,21 @@ $(function() {
     updateState(data);
   });
 
+  socket.on('show results', function(data) {
+    showResultsPage();
+    if (data.success) {
+      $success.show();
+    } else {
+      $failure.show();
+    }
+    console.log('showing results');
+    console.log(data);
+    debugger
+    $lastImage.attr('src', data.lastImageUrl);
+    $lastSentence.text(data.lastSentence);
+  });
   // Whenever the server tells us that we can play the game
-  socket.on('start round', function(data){
+  socket.on('start round', function(data) {
     $(".curImage").attr('src', data.imageUrl);
     // resize image appropriately
     var fillClass = ($(".curImage").height() > $(".curImage").width()) ? 'fillheight' : 'fillwidth';
@@ -464,6 +485,7 @@ $(function() {
 
   function showChatPage(){
     $waitingPage.hide();
+    $resultsPage.hide();
     $chatPage.show();
     $loginPage.hide();
     $sentencePage.hide();
@@ -482,13 +504,27 @@ $(function() {
       }
       $waitingUsers.html(usernameHTML);
     }
+    $resultsPage.hide();
     $waitingPage.show();
     $sentencePage.hide();
     $loginPage.hide();
     $chatPage.hide();
   }
   function showSentencePage(){
+    $sentence.text("The leader of the round is setting the sentence...")
+    $resultsPage.hide();
     $sentencePage.show();
+    $sentenceInput.focus();
+    $waitingPage.hide();
+    $loginPage.hide();
+    $chatPage.hide();
+  }
+
+  function showResultsPage(){
+    $success.hide();
+    $failure.hide();
+    $resultsPage.show();
+    $sentencePage.hide();
     $sentenceInput.focus();
     $waitingPage.hide();
     $loginPage.hide();

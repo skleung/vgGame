@@ -25,8 +25,10 @@
               <img class="img-responsive curImage" src="https://cs.stanford.edu/people/jcjohns/visual-genome/VG100/Images/april21_static_outdoor_kendall/img_0989.jpg"/>
             </div>
             <div class="row text-center" style="margin-top: 15px">
-              <h3 class="text-muted" id="sentence"><h4 class="text-muted">Another player is setting the sentence right now...</br> The game will start momentarily!</h4></h3>
-              <h2 id="counter"></h2>
+              <h3 class="text-muted" id="sentence">
+                Another player is setting the sentence right now...</br> The game will start momentarily!
+              </h3>
+              <h2 class="counter"></h2>
             </div>
           </div>
           <div class="col-md-4">
@@ -71,6 +73,21 @@
         <h1 class="text-center">Waiting for other players...</h3>
         <p class="text-center" id="waitingMessage"></p>
         <p class="text-center" id="waitingUsers"></p>
+      </div>
+    </li>
+    <li class="results page">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <img class="img-responsive" id="lastImage"/>
+        </div>
+      </div>
+      <div class="row text-center">
+        <div class="col-md-6 col-md-offset-3">
+          <h3 id="success" class="title text-success">Congrats!</h3>
+          <h3 id="failure" class="title text-muted">Bummer!</h3>
+          <h4 id="lastSentence" class="title text-muted"></h4>
+          <p class="text-muted">Transitioning to next round in <span class="counter"></span> ...</p>
+        </div>
       </div>
     </li>
   </ul>
