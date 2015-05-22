@@ -16,18 +16,15 @@ And point your browser to `http://localhost:4000`.
 ## TODO:
 
 - [x] Add interface for first user to enter a sentence
-- [ ] Cycling through users (Kenji)
-- [ ] Save the sentence that is collected to Parse (Sherman)
+- [x] Cycling through users (Kenji)
+- [x] Save the sentence that is collected to Parse (Sherman)
 - [x] Build socket connections to understand when people are hitting words within the sentence (Sherman)
 - [x] Build logic to update scoreboard accordingly (Sherman)
-- [ ] Transitioning to next game (Kenji)
-- [ ] Animating and polishing up the look of the app (Sherman)
-- [ ] Integrate dynamic image URLs (Kenji)
+- [x] Transitioning to next game (Kenji)
+- [x] Animating and polishing up the look of the app (Sherman)
+- [x] Integrate dynamic image URLs (Sherman)
 
-## Features
+## Nice to have Features
 
-- Multiple users can join a chat room by each entering a unique username
-on website load.
-- Users can type chat messages to the chat room.
-- A notification is sent to all users when a user joins or leaves
-the chatroom.
+- Multiple chat rooms
+- Flagging misannotated sentences
