@@ -405,12 +405,14 @@ $(function() {
 
   // Whenever a user hits a word by themselves
   socket.on('hit word', function (data) {
+    $('#bing-sound').get(0).play();
     log("Congrats - you correctly guessed '" + data.word+"'!");
     updateScores(data, true);
     updateState(data);
   });
 
   socket.on('update score', function(data) {
+    $('#ping-sound').get(0).play();
     log(data.username + " correctly guessed '" + data.word + "'!");
     updateScores(data, true);
     updateState(data);
@@ -419,8 +421,10 @@ $(function() {
   socket.on('show results', function(data) {
     showResultsPage();
     if (data.success) {
+      $('#success-sound').get(0).play();
       $success.show();
     } else {
+      $('#fail-sound').get(0).play();
       $failure.show();
     }
     $lastImage.attr('src', data.lastImageUrl);
