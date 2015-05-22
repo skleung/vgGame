@@ -13,8 +13,10 @@ $(function() {
   var $window = $(window);
   var $usernameInput = $('.usernameInput'); // Input for username
   var $sentenceInput = $('.sentenceInput'); // Input for username
+  var $sentenceInputWrapper = $('#sentenceInputWrapper'); // Input for username
   var $messages = $('.messages'); // Messages area
   var $inputMessage = $('.inputMessage'); // Input message input box
+  var $errorMessage = $('.errorMessage'); // Input message input box
 
   var $loginPage = $('.login.page'); // The login page
   var $chatPage = $('.chat.page'); // The chatroom page
@@ -112,7 +114,6 @@ $(function() {
         username: username,
         sentence: sentence
       }
-
       socket.emit('create sentence', data);
     }
   }
@@ -138,34 +139,6 @@ $(function() {
   function log(message, options) {
     var $el = $('<li>').addClass('log').text(message);
     addMessageElement($el, options);
-  }
-
-  // Retrieves an array of sentence objects
-  function getSentences() {
-    if (!localStorage.sentences) {
-      // default to empty array
-      localStorage.sentences = JSON.stringify([]);
-    }
-    return JSON.parse(localStorage.sentences);
-  }
-
-  // Stores an array of sentences
-  function storeSentences(sentences) {
-    localStorage.sentences = JSON.stringify(sentences);
-  }
-
-    // Retrieves an array of sentence objects
-  function getMySentences() {
-    if (!localStorage.mySentences) {
-      // default to empty array
-      localStorage.mySentences = JSON.stringify([]);
-    }
-    return JSON.parse(localStorage.mySentences);
-  }
-
-  // Stores an array of sentences
-  function storeMySentences(sentences) {
-    localStorage.mySentences = JSON.stringify(sentences);
   }
 
   // Adds the visual chat message to the message list
@@ -325,6 +298,18 @@ $(function() {
     }
     // When the client hits ENTER on their keyboard
     if (event.which === 13) {
+      // validate the sentence
+      var sentence = $sentenceInput.val();
+      console.log(sentence.split(" "));
+      if (sentence.split(" ").length < 4) {
+        $sentenceInputWrapper.addClass("has-error");
+        $sentenceInput.css("border-bottom", "5px solid #a94442");
+        $errorMessage.text("Please enter a sentence with at least 4 words");
+        return;
+      }
+
+      $sentenceInput.css("border-bottom", "2px solid #000");
+      // set the sentence and send to the server
       setSentence();
     }
   });
@@ -438,9 +423,6 @@ $(function() {
     } else {
       $failure.show();
     }
-    console.log('showing results');
-    console.log(data);
-    debugger
     $lastImage.attr('src', data.lastImageUrl);
     $lastSentence.text(data.lastSentence);
   });
