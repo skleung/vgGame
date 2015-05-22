@@ -90,7 +90,7 @@ function saveAndShowResults(success) {
     lastImageUrl: imageUrls[imageIndex]["image"],
     success: success
   });
-  countdown = 5;
+  countdown = TIME_LIMIT;
   shouldShowResults = false;
 }
 
@@ -136,7 +136,7 @@ io.on('connection', function (socket) {
           if (stopWords.indexOf(word) >= 0) {
             scores[socket.username]++;
           } else {
-            scores[socket.username]+=5;
+            scores[socket.username]+=1;
           }
           updateState(word);
 
@@ -226,7 +226,9 @@ io.on('connection', function (socket) {
     updateState(startingWord);
     // reset timer when the sentence is created
     countdown = TIME_LIMIT;
-    // echo globally (all clients) that a sentence has been set
+    // echo globally (al
+
+      l clients) that a sentence has been set
     socket.broadcast.emit('sentence set', {
       owner: owner,
       state: sentenceState
