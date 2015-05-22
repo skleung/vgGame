@@ -405,13 +405,13 @@ $(function() {
 
   // Whenever a user hits a word by themselves
   socket.on('hit word', function (data) {
-    log("Congrats - you correctly guessed " + data.word);
+    log("Congrats - you correctly guessed '" + data.word+"'!");
     updateScores(data, true);
     updateState(data);
   });
 
   socket.on('update score', function(data) {
-    log(data.username + " correctly guessed <strong>'" + data.word) + "'</strong>!";
+    log(data.username + " correctly guessed '" + data.word + "'!");
     updateScores(data, true);
     updateState(data);
   });
