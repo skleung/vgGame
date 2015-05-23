@@ -90,7 +90,7 @@ function saveAndShowResults(success) {
     lastImageUrl: imageUrls[imageIndex]["image"],
     success: success
   });
-  countdown = 5;
+  countdown = TIME_LIMIT;
   shouldShowResults = false;
 }
 
@@ -136,7 +136,7 @@ io.on('connection', function (socket) {
           if (stopWords.indexOf(word) >= 0) {
             scores[socket.username]++;
           } else {
-            scores[socket.username]+=5;
+            scores[socket.username]+=1;
           }
           updateState(word);
 
