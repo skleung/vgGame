@@ -226,9 +226,7 @@ io.on('connection', function (socket) {
     updateState(startingWord);
     // reset timer when the sentence is created
     countdown = TIME_LIMIT;
-    // echo globally (al
-
-      l clients) that a sentence has been set
+    // echo globally (all clients) that a sentence has been set
     socket.broadcast.emit('sentence set', {
       owner: owner,
       state: sentenceState
