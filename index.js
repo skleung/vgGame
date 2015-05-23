@@ -33,6 +33,7 @@ var sentenceMap = {};
 var sentence = "";
 var sentenceArr = [];
 var sentenceState = [];
+var startingWord = "";
 
 function clearState(){
   freqMap = {};
@@ -70,6 +71,7 @@ function startRound() {
 function saveAndShowResults(success) {
   var Annotation = Parse.Object.extend("Annotation");
   var newAnnotation = new Annotation();
+  freqMap[startingWord]--;
   var data = {
     sentence: sentence,
     pk: imageUrls[imageIndex]["pk"],
@@ -220,10 +222,11 @@ io.on('connection', function (socket) {
       sentenceMap[word] = true;
       sentenceState.push("_____");
     }
-    var startingWord = sentenceArr[Math.floor((Math.random() * sentenceArr.length))];
+    startingWord = sentenceArr[Math.floor((Math.random() * sentenceArr.length))];
     while (stopWords.indexOf(startingWord) >= 0) {
       startingWord = sentenceArr[Math.floor((Math.random() * sentenceArr.length))];
     }
+    freqMap[startingWord] = 1;
     updateState(startingWord);
     // reset timer when the sentence is created
     countdown = GAME_TIME_LIMIT;
