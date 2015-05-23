@@ -17,6 +17,7 @@ $(function() {
   var $messages = $('.messages'); // Messages area
   var $inputMessage = $('.inputMessage'); // Input message input box
   var $errorMessage = $('.errorMessage'); // Input message input box
+  var $usernameInputError = $('.usernameInputError'); // Input message input box
 
   var $loginPage = $('.login.page'); // The login page
   var $chatPage = $('.chat.page'); // The chatroom page
@@ -77,14 +78,10 @@ $(function() {
 
   // Sets the client's username
   function setUsername () {
-    username = cleanInput($usernameInput.val().trim());
+    var username = cleanInput($usernameInput.val().trim());
 
     // If the username is valid
     if (username) {
-      $loginPage.fadeOut();
-      $loginPage.off('click');
-      $currentInput = $inputMessage.focus();
-
       var color = getUsernameColor(username);
       var score = 0;
       $scoreboard.append("<li style='color:"+ color +"'><b>"+ username + ": "+ score + "</b></li>");
@@ -335,6 +332,12 @@ $(function() {
   // Whenever the server emits 'login', log the login message
   socket.on('login', function (data) {
     connected = true;
+    username = data.username;
+    $loginPage.fadeOut();
+    $loginPage.off('click');
+    $currentInput = $inputMessage.focus();
+    $usernameInput.css('border-bottom', '2px solid white');
+    $usernameInputError.hide();
     // Display the welcome message
     var message = "Welcome to vgChat – ";
     log(message, {
@@ -349,6 +352,12 @@ $(function() {
 
     addParticipantsMessage(data);
     updateScores(data, false);
+  });
+
+  socket.on('error login', function (data){
+    $usernameInput.css('border-bottom', '5px solid red');
+    $usernameInputError.text(data.username + " has already been taken!");
+    $usernameInputError.show();
   });
 
   // Whenever the server emits 'new message', update the chat body

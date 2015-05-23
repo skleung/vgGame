@@ -174,38 +174,49 @@ io.on('connection', function (socket) {
 
   // when the client emits 'add user', this listens and executes
   socket.on('add user', function (username) {
-    // we store the username in the socket session for this client
-    socket.username = username;
     // add the client's username to the global list of scores and init to 0
-    scores[username] = 0;
-    usernameArr.push(username);
-    ++numUsers;
-    addedUser = true;
-    socket.emit('login', {
-      numUsers: numUsers,
-      scores: scores,
-      usernames: usernameArr,
-      sentence: sentence
-    });
-    // echo globally (all clients) that a person has connected
-    socket.broadcast.emit('user joined', {
-      username: socket.username,
-      numUsers: numUsers,
-      scores: scores
-    });
-    if(numUsers < MIN_NUM_USERS){
-      socket.emit('wait',{
-        numUsers: numUsers,
-        usernames: usernameArr
+    if (username in scores) {
+      // if username already exists
+      socket.emit('error login', {
+        username: username,
+        numUser: numUsers,
       });
-    }else{
-      leader_num = 0;
-      shouldShowResults = true;
-      io.sockets.emit('start round',{
+      console.log("username already taken");
+      return;
+    } else {
+      console.log("username not taken");
+      // we store the username in the socket session for this client
+      socket.username = username;
+      scores[username] = 0;
+      usernameArr.push(username);
+      ++numUsers;
+      addedUser = true;
+      socket.emit('login', {
         numUsers: numUsers,
-        imageUrl: imageUrls[imageIndex]["image"],
-        leader: usernameArr[leader_num]
+        scores: scores,
+        usernames: usernameArr,
+        sentence: sentence
       });
+      // echo globally (all clients) that a person has connected
+      socket.broadcast.emit('user joined', {
+        username: socket.username,
+        numUsers: numUsers,
+        scores: scores
+      });
+      if(numUsers < MIN_NUM_USERS){
+        socket.emit('wait',{
+          numUsers: numUsers,
+          usernames: usernameArr
+        });
+      }else{
+        leader_num = 0;
+        shouldShowResults = true;
+        io.sockets.emit('start round',{
+          numUsers: numUsers,
+          imageUrl: imageUrls[imageIndex]["image"],
+          leader: usernameArr[leader_num]
+        });
+      }
     }
   });
 
