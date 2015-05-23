@@ -42,7 +42,8 @@ function clearState(){
   sentenceState = [];
 }
 
-var TIME_LIMIT = 30;
+var TRANSITION_TIME_LIMIT = 5;
+var GAME_TIME_LIMIT = 30;
 var MIN_NUM_USERS = 3;
 var settingSentence = true;
 var shouldShowResults = true;
@@ -90,7 +91,7 @@ function saveAndShowResults(success) {
     lastImageUrl: imageUrls[imageIndex]["image"],
     success: success
   });
-  countdown = TIME_LIMIT;
+  countdown = TRANSITION_TIME_LIMIT;
   shouldShowResults = false;
 }
 
@@ -124,7 +125,7 @@ io.on('connection', function (socket) {
     data = data.trim();
     var wordArray = data.split(" ");
     for (var i=0; i<wordArray.length; i++) {
-      var word = wordArray[i];
+      var word = wordArray[i].toLowerCase();
       if (word in freqMap) {
         freqMap[word]++;
       } else {
@@ -212,10 +213,10 @@ io.on('connection', function (socket) {
     // set the owner of the sentence
     owner = data.username;
     sentence = data.sentence;
-    sentenceArr = sentence.split(/[ ,]+/);
+    sentenceArr = sentence.toLowerCase().split(/[ ,]+/);
 
     for (var i = 0; i < sentenceArr.length; i++) {
-      word = sentenceArr[i];
+      word = sentenceArr[i].toLowerCase();
       sentenceMap[word] = true;
       sentenceState.push("_____");
     }
@@ -225,7 +226,7 @@ io.on('connection', function (socket) {
     }
     updateState(startingWord);
     // reset timer when the sentence is created
-    countdown = TIME_LIMIT;
+    countdown = GAME_TIME_LIMIT;
     // echo globally (all clients) that a sentence has been set
     socket.broadcast.emit('sentence set', {
       owner: owner,
