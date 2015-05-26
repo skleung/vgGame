@@ -181,10 +181,8 @@ io.on('connection', function (socket) {
         username: username,
         numUser: numUsers,
       });
-      console.log("username already taken");
       return;
     } else {
-      console.log("username not taken");
       // we store the username in the socket session for this client
       socket.username = username;
       scores[username] = 0;
@@ -195,7 +193,8 @@ io.on('connection', function (socket) {
         numUsers: numUsers,
         scores: scores,
         usernames: usernameArr,
-        sentence: sentence
+        sentence: sentence,
+        username: username
       });
       // echo globally (all clients) that a person has connected
       socket.broadcast.emit('user joined', {
