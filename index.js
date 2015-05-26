@@ -44,18 +44,24 @@ function clearState(){
 }
 
 var TRANSITION_TIME_LIMIT = 5;
-var GAME_TIME_LIMIT = 30;
+var GAME_TIME_LIMIT = 5;
 var MIN_NUM_USERS = 3;
+var NUM_ROUNDS = 3;
 var settingSentence = true;
 var shouldShowResults = true;
 
 
 // set the timer to 30 seconds
 var countdown = 0;
-var keepCounting = true
+var curRound = 1;
+var lastRound = false;
+var keepCounting = true;
 
 function startRound() {
-
+  curRound += 1;
+  if (curRound == NUM_ROUNDS) {
+    lastRound = true;
+  }
   imageIndex = Math.floor(Math.random() * imageUrls.length);
   leader_num = (leader_num + 1) % numUsers;
   io.sockets.emit('start round',{
@@ -88,11 +94,35 @@ function saveAndShowResults(success) {
     }
   });
 
-  io.sockets.emit('show results', {
-    lastSentence: sentence,
-    lastImageUrl: imageUrls[imageIndex]["image"],
-    success: success
-  });
+  if (lastRound) {
+    console.log("in last round");
+    var maxScore = -1;
+    var winner = usernameArr[0];
+    for (user in data.scores) {
+      if (data.scores[user] > maxScore) {
+        maxScore = data.scores[user];
+        winner = user;
+      }
+    }
+    curRound = 0;
+      io.sockets.emit('show results', {
+      lastSentence: sentence,
+      lastImageUrl: imageUrls[imageIndex]["image"],
+      success: success,
+      isLastRound: true,
+      winner: winner,
+      maxScore: maxScore
+    });
+    lastRound = false;
+  } else {
+    io.sockets.emit('show results', {
+      lastSentence: sentence,
+      lastImageUrl: imageUrls[imageIndex]["image"],
+      success: success,
+      isLastRound: false
+    });
+  }
+
   countdown = TRANSITION_TIME_LIMIT;
   shouldShowResults = false;
 }

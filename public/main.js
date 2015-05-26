@@ -33,6 +33,7 @@ $(function() {
   var $success = $('#success');
   var $failure = $('#failure');
   var $lastImage = $('#lastImage');
+  var $lastRoundText = $('#lastRoundText');
   var $scoreboard = $('#scoreboard');
   var $counter = $('.counter');
 
@@ -48,6 +49,7 @@ $(function() {
   $reset.hide();
   $sentencePage.hide();
   $resultsPage.hide();
+  $lastRoundText.hide();
   $waitingPage.hide();
 
   var socket = io();
@@ -438,6 +440,11 @@ $(function() {
     }
     $lastImage.attr('src', data.lastImageUrl);
     $lastSentence.text(data.lastSentence);
+
+    if (data.isLastRound) {
+      $('.winner').text(data.winner);
+      $('.maxScore').text(data.maxScore);
+    }
   });
   // Whenever the server tells us that we can play the game
   socket.on('start round', function(data) {
@@ -481,6 +488,7 @@ $(function() {
   function showChatPage(){
     $waitingPage.hide();
     $resultsPage.hide();
+    $lastRoundText.hide();
     $chatPage.show();
     $loginPage.hide();
     $sentencePage.hide();
@@ -500,6 +508,7 @@ $(function() {
       $waitingUsers.html(usernameHTML);
     }
     $resultsPage.hide();
+    $lastRoundText.hide();
     $waitingPage.show();
     $sentencePage.hide();
     $loginPage.hide();
@@ -508,6 +517,7 @@ $(function() {
   function showSentencePage(){
     $sentence.text("The leader of the round is setting the sentence...")
     $resultsPage.hide();
+    $lastRoundText.hide();
     $sentencePage.show();
     $sentenceInput.focus();
     $waitingPage.hide();
