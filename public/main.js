@@ -442,6 +442,7 @@ $(function() {
     $lastSentence.text(data.lastSentence);
 
     if (data.isLastRound) {
+      $('#lastRoundText').show();
       $('.winner').text(data.winner);
       $('.maxScore').text(data.maxScore);
     }

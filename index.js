@@ -98,9 +98,9 @@ function saveAndShowResults(success) {
     console.log("in last round");
     var maxScore = -1;
     var winner = usernameArr[0];
-    for (user in data.scores) {
-      if (data.scores[user] > maxScore) {
-        maxScore = data.scores[user];
+    for (user in scores) {
+      if (scores[user] > maxScore) {
+        maxScore = scores[user];
         winner = user;
       }
     }
@@ -225,7 +225,8 @@ io.on('connection', function (socket) {
         numUsers: numUsers,
         scores: scores,
         usernames: usernameArr,
-        sentence: sentence
+        sentence: sentence,
+        username: username
       });
       // echo globally (all clients) that a person has connected
       socket.broadcast.emit('user joined', {
