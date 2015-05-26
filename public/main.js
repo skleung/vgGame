@@ -465,7 +465,6 @@ $(function() {
     //   console.log("half = " + $(".curImage").width()/2.0);
     //   $(".curImage").css('margin-left', "-"+ $(".curImage").width()/2.0+'px');
     // }, 0);
-
     if(data.leader == username){
       showSentencePage();
     }else{

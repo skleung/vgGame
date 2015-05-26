@@ -211,10 +211,8 @@ io.on('connection', function (socket) {
         username: username,
         numUser: numUsers,
       });
-      console.log("username already taken");
       return;
     } else {
-      console.log("username not taken");
       // we store the username in the socket session for this client
       socket.username = username;
       scores[username] = 0;
