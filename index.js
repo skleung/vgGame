@@ -44,9 +44,9 @@ function clearState(){
 }
 
 var TRANSITION_TIME_LIMIT = 5;
-var GAME_TIME_LIMIT = 5;
+var GAME_TIME_LIMIT = 30;
 var MIN_NUM_USERS = 3;
-var NUM_ROUNDS = 3;
+var NUM_ROUNDS = 12;
 var settingSentence = true;
 var shouldShowResults = true;
 
