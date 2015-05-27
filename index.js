@@ -93,6 +93,8 @@ function saveAndShowResults(success) {
     }
   });
 
+  clearState();
+
   if (lastRound) {
     var maxScore = -1;
     var winner = usernameArr[0];
@@ -110,6 +112,7 @@ function saveAndShowResults(success) {
       curRound: curRound,
       totalRounds: NUM_ROUNDS,
       isLastRound: true,
+      state: sentenceState,
       winner: winner,
       maxScore: maxScore
     });
@@ -120,6 +123,7 @@ function saveAndShowResults(success) {
       lastImageUrl: imageUrls[imageIndex]["image"],
       success: success,
       curRound: curRound,
+      state: sentenceState,
       totalRounds: NUM_ROUNDS,
       isLastRound: false
     });
