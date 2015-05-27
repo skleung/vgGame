@@ -171,12 +171,12 @@ io.on('connection', function (socket) {
       }
       if (word in sentenceMap) {
         if (freqMap[word] == 1) {
-          // first hit scores a point
-          if (stopWords.indexOf(word) >= 0) {
-            scores[socket.username]++;
-          } else {
-            scores[socket.username]+=1;
-          }
+          // first hit scores a point for player and leader
+          var leader = usernameArr[leader_num];
+          scores[leader]+=1;
+          scores[socket.username]+=1;
+
+          // update the state of the sentence
           updateState(word);
 
           socket.broadcast.emit('update score', {
