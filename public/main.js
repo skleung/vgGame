@@ -448,8 +448,7 @@ $(function() {
     $lastSentence.text(data.lastSentence);
     $(".curRound").text(data.curRound);
     $(".totalRounds").text(data.totalRounds);
-    // clear the state
-    updateState(data);
+
     if (data.isLastRound) {
       $('#lastRoundText').show();
       $('.winner').text(data.winner);

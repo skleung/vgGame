@@ -43,8 +43,8 @@ function clearState(){
   sentenceState = [];
 }
 
-var TRANSITION_TIME_LIMIT = 5;
-var GAME_TIME_LIMIT = 30;
+var TRANSITION_TIME_LIMIT = 7;
+var GAME_TIME_LIMIT = 45;
 var MIN_NUM_USERS = 3;
 var NUM_ROUNDS = 12;
 var settingSentence = true;
@@ -93,8 +93,6 @@ function saveAndShowResults(success) {
     }
   });
 
-  clearState();
-
   if (lastRound) {
     var maxScore = -1;
     var winner = usernameArr[0];
@@ -112,7 +110,7 @@ function saveAndShowResults(success) {
       curRound: curRound,
       totalRounds: NUM_ROUNDS,
       isLastRound: true,
-      state: sentenceState,
+      state: [],
       winner: winner,
       maxScore: maxScore
     });
@@ -123,11 +121,13 @@ function saveAndShowResults(success) {
       lastImageUrl: imageUrls[imageIndex]["image"],
       success: success,
       curRound: curRound,
-      state: sentenceState,
+      state: [],
       totalRounds: NUM_ROUNDS,
       isLastRound: false
     });
   }
+
+  clearState();
 
   countdown = TRANSITION_TIME_LIMIT;
   shouldShowResults = false;
@@ -261,7 +261,9 @@ io.on('connection', function (socket) {
     // set the owner of the sentence
     owner = data.username;
     sentence = data.sentence;
-    sentenceArr = sentence.toLowerCase().split(/[ ,]+/);
+    var strippedSentence = sentence.replace(/[^a-zA-Z0-9 ]+/g, '').replace('/ {2,}/',' ');
+    sentenceArr = strippedSentence.toLowerCase().split(/[ ,]+/);
+    // removes
 
     for (var i = 0; i < sentenceArr.length; i++) {
       word = sentenceArr[i].toLowerCase();
