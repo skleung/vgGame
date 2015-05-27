@@ -279,11 +279,11 @@ io.on('connection', function (socket) {
     });
   });
 
-  socket.on('flag sentence', function (data) {
+  socket.on('flag sentence', function (input) {
     var FlaggedSentence = Parse.Object.extend("FlaggedSentence");
     var newFlaggedSentence = new FlaggedSentence();
     var data = {
-      sentence: data.lastSentence
+      sentence: input.lastSentence
     }
     newFlaggedSentence.save(data).then(function(object) {
       console.log(sentence + " was flagged.");
