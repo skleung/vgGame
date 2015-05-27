@@ -43,7 +43,7 @@ function clearState(){
   sentenceState = [];
 }
 
-var TRANSITION_TIME_LIMIT = 105;
+var TRANSITION_TIME_LIMIT = 5;
 var GAME_TIME_LIMIT = 30;
 var MIN_NUM_USERS = 3;
 var NUM_ROUNDS = 12;
@@ -58,7 +58,6 @@ var keepCounting = true;
 
 function startRound() {
   console.log("starting round");
-  curRound += 1;
   if (curRound == NUM_ROUNDS) {
     lastRound = true;
   }
@@ -78,6 +77,7 @@ function saveAndShowResults(success) {
   var Annotation = Parse.Object.extend("Annotation");
   var newAnnotation = new Annotation();
   freqMap[startingWord]--;
+  curRound += 1;
   var data = {
     sentence: sentence,
     pk: imageUrls[imageIndex]["pk"],
@@ -283,7 +283,7 @@ io.on('connection', function (socket) {
     var FlaggedSentence = Parse.Object.extend("FlaggedSentence");
     var newFlaggedSentence = new FlaggedSentence();
     var data = {
-      sentence: lastSentence
+      sentence: data.lastSentence
     }
     newFlaggedSentence.save(data).then(function(object) {
       console.log(sentence + " was flagged.");
