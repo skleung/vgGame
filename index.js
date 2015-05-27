@@ -43,13 +43,12 @@ function clearState(){
   sentenceState = [];
 }
 
-var TRANSITION_TIME_LIMIT = 5;
+var TRANSITION_TIME_LIMIT = 105;
 var GAME_TIME_LIMIT = 30;
 var MIN_NUM_USERS = 3;
 var NUM_ROUNDS = 12;
 var settingSentence = true;
 var shouldShowResults = true;
-
 
 // set the timer to 30 seconds
 var countdown = 0;
@@ -58,6 +57,7 @@ var lastRound = false;
 var keepCounting = true;
 
 function startRound() {
+  console.log("starting round");
   curRound += 1;
   if (curRound == NUM_ROUNDS) {
     lastRound = true;
@@ -85,7 +85,6 @@ function saveAndShowResults(success) {
     imageURL: imageUrls[imageIndex]["image"],
     gameFinished: success
   }
-
   newAnnotation.save(data).then(function(object) {
     if (success) {
       console.log("sentence successfully guessed! " + sentence);
@@ -95,7 +94,6 @@ function saveAndShowResults(success) {
   });
 
   if (lastRound) {
-    console.log("in last round");
     var maxScore = -1;
     var winner = usernameArr[0];
     for (user in scores) {
@@ -105,10 +103,12 @@ function saveAndShowResults(success) {
       }
     }
     curRound = 0;
-      io.sockets.emit('show results', {
+    io.sockets.emit('show results', {
       lastSentence: sentence,
       lastImageUrl: imageUrls[imageIndex]["image"],
       success: success,
+      curRound: curRound,
+      totalRounds: NUM_ROUNDS,
       isLastRound: true,
       winner: winner,
       maxScore: maxScore
@@ -119,6 +119,8 @@ function saveAndShowResults(success) {
       lastSentence: sentence,
       lastImageUrl: imageUrls[imageIndex]["image"],
       success: success,
+      curRound: curRound,
+      totalRounds: NUM_ROUNDS,
       isLastRound: false
     });
   }
@@ -274,6 +276,17 @@ io.on('connection', function (socket) {
     socket.broadcast.emit('sentence set', {
       owner: owner,
       state: sentenceState
+    });
+  });
+
+  socket.on('flag sentence', function (data) {
+    var FlaggedSentence = Parse.Object.extend("FlaggedSentence");
+    var newFlaggedSentence = new FlaggedSentence();
+    var data = {
+      sentence: lastSentence
+    }
+    newFlaggedSentence.save(data).then(function(object) {
+      console.log(sentence + " was flagged.");
     });
   });
 

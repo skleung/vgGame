@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>vgChat</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="animate.css">
 </head>
@@ -87,11 +87,12 @@
       </div>
       <div class="row text-center">
         <div class="col-md-6 col-md-offset-3">
-          <h3 id="success" class="title text-success">Congrats!</h3>
+          <h3 id="success" class="title text-success">Sentence Guessed!</h3>
           <h3 id="failure" class="title text-muted">Bummer!</h3>
           <h4 id="lastSentence" class="title text-muted"></h4>
-          <h4 id="lastRoundText"> That was the last round of this 12-round game. <strong class="winner"></strong> won with <strong class="maxScore text-primary"></strong> points</h4>
-          <p class="text-muted">Transitioning to next round in <span class="counter"></span> ...</p>
+          <div class="flagSentence btn-link btn">Inaccurate sentence?</div><small> (e.g. undescriptive sentences, mispellings, grammar mistakes, etc...)</small>
+          <h4 id="lastRoundText"> That was the last round of a set of <strong class="totalRounds"></strong> rounds. </br> <strong class="winner"></strong> won with <strong class="maxScore text-primary"></strong> points</h4>
+          <p class="text-muted">Transitioning to round <strong class="curRound"> </strong> of <strong class="totalRounds"></strong> in <span class="counter"></span> ...</p>
         </div>
       </div>
     </li>
@@ -100,7 +101,7 @@
   <audio id="fail-sound" preload="auto"><source src="../sound/fail.wav" type="audio/wav"></audio>
   <audio id="bing-sound" preload="auto"><source src="../sound/bing.wav" type="audio/wav"></audio>
   <audio id="ping-sound" preload="auto"><source src="../sound/ping.wav" type="audio/wav"></audio>
-  <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="js/jquery-1.11.0.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="/main.js"></script>
   <script>

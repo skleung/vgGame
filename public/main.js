@@ -32,6 +32,7 @@ $(function() {
   var $lastSentence = $('#lastSentence');
   var $success = $('#success');
   var $failure = $('#failure');
+  var $flagSentenceBtn = $(".flagSentence");
   var $lastImage = $('#lastImage');
   var $lastRoundText = $('#lastRoundText');
   var $scoreboard = $('#scoreboard');
@@ -68,6 +69,7 @@ $(function() {
       $reset.hide()
       socket.emit('reset');
   });
+
   function addParticipantsMessage (data) {
     var message = '';
     if (data.numUsers === 1) {
@@ -313,6 +315,10 @@ $(function() {
     }
   });
 
+  $flagSentenceBtn.click(function() {
+    flagSentence();
+  });
+
   $inputMessage.on('input', function() {
     updateTyping();
   });
@@ -440,10 +446,13 @@ $(function() {
     }
     $lastImage.attr('src', data.lastImageUrl);
     $lastSentence.text(data.lastSentence);
-
+    $(".curRound").text(data.curRound);
+    $(".totalRounds").text(data.totalRounds);
     if (data.isLastRound) {
       $('#lastRoundText').show();
       $('.winner').text(data.winner);
+      var color = getUsernameColor(username);
+      $('.winner').css("color", color);
       $('.maxScore').text(data.maxScore);
     }
   });
@@ -484,6 +493,12 @@ $(function() {
   socket.on('stop typing', function (data) {
     removeChatTyping(data);
   });
+
+  function flagSentence() {
+    socket.emit('flag sentence', {
+      lastSentence: $lastSentence.val()
+    });
+  }
 
   function showChatPage(){
     $waitingPage.hide();
@@ -526,6 +541,7 @@ $(function() {
   }
 
   function showResultsPage(){
+    console.log("showing resuls");
     $success.hide();
     $failure.hide();
     $resultsPage.show();
