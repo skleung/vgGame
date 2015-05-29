@@ -55,7 +55,7 @@ $(function() {
 
   var socket = io();
   socket.on('timer', function (data) {
-    $counter.html("Time: " + data.countdown);
+    $counter.html(data.countdown);
     if (data.countdown <= 0) {
       $counter.html("");
       $counter.css("color", "red");
@@ -393,6 +393,7 @@ $(function() {
   });
 
   function updateState(data) {
+    if ($counter.html().size() == 0) return;
     $sentence.empty();
     $sentence.html(data.state.join([separator = ' ']));
   }
@@ -422,6 +423,7 @@ $(function() {
 
   // Whenever the server tells us to wait
   socket.on('wait', function (data) {
+    if(username =="") return;
     showWaitingPage(data);
   });
 
