@@ -243,13 +243,17 @@ io.on('connection', function (socket) {
           numUsers: numUsers,
           usernames: usernameArr
         });
-      }else{
+      }else if(numUsers == MIN_NUM_USERS){
         leader_num = 0;
         shouldShowResults = true;
         io.sockets.emit('start round',{
           numUsers: numUsers,
           imageUrl: imageUrls[imageIndex]["image"],
           leader: usernameArr[leader_num]
+        });
+      }else{
+        socket.emit('join round',{
+          state: sentenceState
         });
       }
     }

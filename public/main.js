@@ -387,6 +387,11 @@ $(function() {
     updateScores(data);
   });
 
+  socket.on('join round', function(data){
+    showChatPage();
+    updateState(data);  
+  });
+
   function updateState(data) {
     $sentence.empty();
     $sentence.html(data.state.join([separator = ' ']));
@@ -436,6 +441,7 @@ $(function() {
   });
 
   socket.on('show results', function(data) {
+    if(username.length == 0) return;
     showResultsPage();
     if (data.success) {
       $('#success-sound').get(0).play();
@@ -459,6 +465,7 @@ $(function() {
   });
   // Whenever the server tells us that we can play the game
   socket.on('start round', function(data) {
+    if(username.length == 0) return;
     $(".curImage").attr('src', data.imageUrl);
     // resize image appropriately
     var fillClass = ($(".curImage").height() > $(".curImage").width()) ? 'fillheight' : 'fillwidth';
