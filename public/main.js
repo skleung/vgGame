@@ -448,6 +448,7 @@ $(function() {
 
   socket.on('show results', function(data) {
     if(username){
+      $inputMessage.prop('disabled', false);
       showResultsPage();
       if (data.success) {
         $('#success-sound').get(0).play();
@@ -491,13 +492,15 @@ $(function() {
       // }, 0);
       if(data.leader == username){
         showSentencePage();
-      }
-      if{
+      }else{
         showChatPage();
         log(data.leader + " is currently setting the sentence.", {
           prepend: true
         });
-        updateState();
+
+        var color = getUsernameColor(data.leader);
+        var html = "<strong style='color:" + color + "'> " + data.leader + " </strong> is currently setting the sentence."
+        $("#sentence").html(html);
       }
     }
   });
