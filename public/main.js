@@ -55,9 +55,9 @@ $(function() {
 
   var socket = io();
   socket.on('timer', function (data) {
-    $counter.html(data.countdown);
+    $counter.html("Time: " + data.countdown);
     if (data.countdown <= 0) {
-      $counter.html(0);
+      $counter.html("");
       $counter.css("color", "red");
       $reset.fadeIn();
     } else {
