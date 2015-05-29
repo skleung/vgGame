@@ -379,7 +379,7 @@ $(function() {
   // Whenever the server emits 'sentence set' we can start the game
   socket.on('sentence set', function (data) {
     log(data.owner + " has set the sentence!");
-    $counter.html(GAME_TIME_LIMIT);
+    $counter.html(data.countdown);
     $inputMessage.prop('disabled', false);
     updateState(data);
   });
@@ -397,9 +397,10 @@ $(function() {
   });
 
   function updateState(data) {
-    if ($counter.html().size() == 0) return;
-    $sentence.empty();
-    $sentence.html(data.state.join([separator = ' ']));
+    if ($counter.html()){ 
+      $sentence.empty();
+      $sentence.html(data.state.join([separator = ' ']));
+    }
   }
 
   function updateScores(data, animated) {
@@ -490,11 +491,13 @@ $(function() {
       // }, 0);
       if(data.leader == username){
         showSentencePage();
-      }else{
+      }
+      if{
         showChatPage();
         log(data.leader + " is currently setting the sentence.", {
           prepend: true
         });
+        updateState();
       }
     }
   });
@@ -545,7 +548,6 @@ $(function() {
     $chatPage.hide();
   }
   function showSentencePage(){
-    $sentence.text("The leader of the round is setting the sentence...")
     $resultsPage.hide();
     $lastRoundText.hide();
     $sentencePage.show();
