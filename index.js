@@ -114,7 +114,10 @@ function saveAndShowResults(success) {
       winner: winner,
       maxScore: maxScore
     });
-    lastRound = false;
+    lastRound = false
+    for (user in scores){
+      scores[user]= 0;
+    }  
   } else {
     io.sockets.emit('show results', {
       lastSentence: sentence,
