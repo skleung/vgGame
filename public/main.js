@@ -393,7 +393,7 @@ $(function() {
 
   socket.on('join round', function(data){
     showChatPage();
-    updateState(data);  
+    updateState(data);
   });
 
   function updateState(data) {
@@ -511,7 +511,7 @@ $(function() {
 
   function flagSentence() {
     socket.emit('flag sentence', {
-      lastSentence: $lastSentence.val()
+      lastSentence: $lastSentence.text()
     });
   }
 
@@ -573,15 +573,15 @@ $(document).unbind('keydown').bind('keydown', function (event) {
     var doPrevent = false;
     if (event.keyCode === 8) {
         var d = event.srcElement || event.target;
-        if ((d.tagName.toUpperCase() === 'INPUT' && 
+        if ((d.tagName.toUpperCase() === 'INPUT' &&
              (
                  d.type.toUpperCase() === 'TEXT' ||
-                 d.type.toUpperCase() === 'PASSWORD' || 
-                 d.type.toUpperCase() === 'FILE' || 
-                 d.type.toUpperCase() === 'EMAIL' || 
-                 d.type.toUpperCase() === 'SEARCH' || 
+                 d.type.toUpperCase() === 'PASSWORD' ||
+                 d.type.toUpperCase() === 'FILE' ||
+                 d.type.toUpperCase() === 'EMAIL' ||
+                 d.type.toUpperCase() === 'SEARCH' ||
                  d.type.toUpperCase() === 'DATE' )
-             ) || 
+             ) ||
              d.tagName.toUpperCase() === 'TEXTAREA') {
             doPrevent = d.readOnly || d.disabled;
         }
