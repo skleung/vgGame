@@ -117,7 +117,7 @@ function saveAndShowResults(success) {
     lastRound = false
     for (user in scores){
       scores[user]= 0;
-    }  
+    }
   } else {
     io.sockets.emit('show results', {
       lastSentence: sentence,
@@ -270,19 +270,31 @@ io.on('connection', function (socket) {
     sentence = data.sentence;
     var strippedSentence = sentence.replace(/[^a-zA-Z0-9 ]+/g, '').replace('/ {2,}/',' ');
     sentenceArr = strippedSentence.toLowerCase().split(/[ ,]+/);
-    // removes
 
     for (var i = 0; i < sentenceArr.length; i++) {
-      word = sentenceArr[i].toLowerCase();
+      var word = sentenceArr[i].toLowerCase();
       sentenceMap[word] = true;
       sentenceState.push("_____");
     }
-    startingWord = sentenceArr[Math.floor((Math.random() * sentenceArr.length))];
-    while (stopWords.indexOf(startingWord) >= 0) {
-      startingWord = sentenceArr[Math.floor((Math.random() * sentenceArr.length))];
+
+    // fills in a single non-stop word
+    // startingWord = sentenceArr[Math.floor((Math.random() * sentenceArr.length))];
+    // while (stopWords.indexOf(startingWord) >= 0) {
+    //   startingWord = sentenceArr[Math.floor((Math.random() * sentenceArr.length))];
+    // }
+    // freqMap[startingWord] = 1;
+    // updateState(startingWord);
+
+    for (var i = 0; i < sentenceArr.length; i++) {
+      var word = sentenceArr[i].toLowerCase();
+      if (stopWords.indexOf(word) >= 0) {
+        updateState(word);
+      }
     }
-    freqMap[startingWord] = 1;
-    updateState(startingWord);
+
+    console.log("finished updating state ");
+    console.log(sentenceState);
+
     // reset timer when the sentence is created
     countdown = GAME_TIME_LIMIT;
     // echo globally (all clients) that a sentence has been set
