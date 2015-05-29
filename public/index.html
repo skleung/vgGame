@@ -1,87 +1,118 @@
 <!doctype html>
 <html lang="en">
-
-  <head>
-    <meta charset="utf-8">
-
-    <title>vgGame</title>
-
-    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
-    <meta name="author" content="Hakim El Hattab">
-
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-
-    <link rel="stylesheet" href="css/reveal.css">
-    <link rel="stylesheet" href="css/theme/night.css" id="theme">
-
-    <!-- Code syntax highlighting -->
-    <link rel="stylesheet" href="lib/css/zenburn.css">
-
-    <!-- Printing and PDF exports -->
-    <script>
-      var link = document.createElement( 'link' );
-      link.rel = 'stylesheet';
-      link.type = 'text/css';
-      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
-      document.getElementsByTagName( 'head' )[0].appendChild( link );
-    </script>
-
-    <!--[if lt IE 9]>
-    <script src="lib/js/html5shiv.js"></script>
-    <![endif]-->
-  </head>
-
-  <body>
-
-    <div class="reveal">
-
-      <!-- Any section element inside of this container is displayed as a slide -->
-      <div class="slides">
-
-        <section data-markdown>
-          <script type="text/template">
-            ## Thanks for playing
-            #### We'd love to hear your feedback if you can take another minute to fill out this form:
-            <a href="http://goo.gl/forms/HxQuhEpN0H">Feedback Form</a>
-          </script>
-        </section>
-
-
+<head>
+  <meta charset="UTF-8">
+  <title>SentenceRacer</title>
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="animate.css">
+</head>
+<body>
+  <div id="fb-root"></div>
+  <script>(function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3&appId=934380689946663";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));</script>
+  <ul class="pages">
+    <li class="chat page">
+      <div class="container" style="margin-top:40px">
+        <div class="row">
+          <div class="pictureArea col-md-6">
+            <div class="row">
+              <img class="img-responsive curImage" src="https://cs.stanford.edu/people/jcjohns/visual-genome/VG100/Images/static_newyork_city_urban/IMG_4809.jpg"/>
+            </div>
+            <div class="row text-center" style="margin-top: 15px">
+              <h3 class="text-muted" id="sentence">
+                Another player is setting the sentence right now...</br> The game will start momentarily!
+              </h3>
+              <h2 class="counter"></h2>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="chatArea row">
+              <ul class="messages"></ul>
+            </div>
+            <div class="row">
+              <input class="inputMessage" style="width: 100%" placeholder="Type here..." spellcheck="true"/>
+            </div>
+          </div>
+          <div class="pointArea col-md-2">
+            <h3>Scoreboard</h3>
+            <ul id="scoreboard">
+            </ul>
+          </div>
+        </div>
       </div>
-
-    </div>
-
-    <script src="lib/js/head.min.js"></script>
-    <script src="js/reveal.js"></script>
-
-    <script>
-      console.log(localStorage.getItem("seenVGgameTutorial"));
-
-      // Full list of configuration options available at:
-      // https://github.com/hakimel/reveal.js#configuration
-      Reveal.initialize({
-        controls: true,
-        progress: true,
-        history: true,
-        center: true,
-
-        transition: 'slide', // none/fade/slide/convex/concave/zoom
-
-        // Optional reveal.js plugins
-        dependencies: [
-          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
-          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
-          { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
-          { src: 'plugin/zoom-js/zoom.js', async: true },
-          { src: 'plugin/notes/notes.js', async: true }
-        ]
-      });
-
-    </script>
-
-  </body>
+    </li>
+    <li class="sentence page">
+      <div class="form">
+        <div class="row">
+          <div class="col-md-6 col-md-offset-3">
+            <img class="img-responsive curImage"/>
+          </div>
+        </div>
+        <div class="row text-center">
+          <div class="col-md-6 col-md-offset-3">
+            <h3 class="title">Describe this image in a sentence</h3>
+            <div class="form-group" id="sentenceInputWrapper">
+              <input class="sentenceInput" type="text"/>
+              <p class="control-label errorMessage"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </li>
+    <li class="login page">
+      <div class="form">
+        <h3 class="title">Enter a username to play!</h3>
+        <input class="usernameInput" type="text" maxlength="14" />
+        <p class="usernameInputError text-danger"></p>
+      </div>
+    </li>
+    <li class="waiting page">
+      <div class="centered">
+        <h1 class="text-center">Waiting for other players...</h3>
+        <p class="text-center" id="waitingMessage"></p>
+        <p class="text-center" id="waitingUsers"></p>
+      </div>
+    </li>
+    <li class="results page">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <img class="img-responsive" id="lastImage"/>
+        </div>
+      </div>
+      <div class="row text-center">
+        <div class="col-md-6 col-md-offset-3">
+          <h3 id="success" class="title text-success">Sentence Guessed!</h3>
+          <h3 id="failure" class="title text-muted">Bummer!</h3>
+          <h4 id="lastSentence" class="title text-muted"></h4>
+          <div class="flagSentence btn-link btn">Inaccurate sentence?</div></br>
+          <small> (e.g. undescriptive sentences, mispellings, grammar mistakes, etc...)</small>
+          <h4 id="lastRoundText"> That was the last round of a set of <strong class="totalRounds"></strong> rounds. </br> <strong class="winner"></strong> won with <strong class="maxScore text-primary"></strong> points</h4>
+          <a href="thankyou.html">Thank you for playing!</a>
+          <p class="text-muted">Transitioning to round <strong class="curRound"> </strong> of <strong class="totalRounds"></strong> in <span class="counter"></span> ...</p>
+        </div>
+      </div>
+    </li>
+  </ul>
+  <audio id="success-sound" preload="auto"><source src="../sound/success.wav" type="audio/wav"></audio>
+  <audio id="fail-sound" preload="auto"><source src="../sound/fail.wav" type="audio/wav"></audio>
+  <audio id="bing-sound" preload="auto"><source src="../sound/bing.wav" type="audio/wav"></audio>
+  <audio id="ping-sound" preload="auto"><source src="../sound/ping.wav" type="audio/wav"></audio>
+  <script src="js/jquery-1.11.0.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/main.js"></script>
+  <script>
+    // redirect to tutorial if need be
+    if (localStorage.getItem("seenVGgameTutorial") === null) {
+        localStorage.setItem("seenVGgameTutorial", true);
+        console.log("redirecting to tutorial...");
+        window.location = "tutorial.html";
+    }
+  </script>
+</body>
 </html>
