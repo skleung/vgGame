@@ -423,7 +423,7 @@ $(function() {
 
   // Whenever the server tells us to wait
   socket.on('wait', function (data) {
-    if(username =="") return;
+    if(username.length == 0) return;
     showWaitingPage(data);
   });
 
@@ -520,18 +520,18 @@ $(function() {
   }
 
   function showWaitingPage(data){
+    var usernameHTML = "";
     if (data.numUsers === 1) {
       $waitingMessage.text("You're the only one in the room right now - share it with your friends!")
     } else {
       $waitingMessage.html("There are " + data.numUsers + " players in the room right now: ");
-      var usernameHTML = "";
       for (var i=0; i<data.usernames.length; i++) {
         var username = data.usernames[i];
         var color = getUsernameColor(username);
         usernameHTML += "<strong style='color:" + color + "'> " + username + " </strong> "
       }
-      $waitingUsers.html(usernameHTML);
     }
+    $waitingUsers.html(usernameHTML);
     $resultsPage.hide();
     $lastRoundText.hide();
     $waitingPage.show();

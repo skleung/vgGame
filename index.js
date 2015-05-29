@@ -242,7 +242,7 @@ io.on('connection', function (socket) {
         scores: scores
       });
       if(numUsers < MIN_NUM_USERS){
-        socket.emit('wait',{
+        io.sockets.emit('wait',{
           numUsers: numUsers,
           usernames: usernameArr
         });
