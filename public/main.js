@@ -111,6 +111,7 @@ $(function() {
 
       log("You set the sentence!");
       // disable the chatting ability!
+      $inputMessage.val("Your chat box is disabled because you set the sentence.")
       $inputMessage.prop('disabled', true);
       $sentence.html(sentence);
       // Tell the server who you are and the sentence you set
@@ -349,6 +350,7 @@ $(function() {
     $currentInput = $inputMessage.focus();
     $usernameInput.css('border-bottom', '2px solid white');
     $usernameInputError.hide();
+    setImage(data);
     // Display the welcome message
     var message = "Welcome to vgChat – ";
     log(message, {
@@ -363,6 +365,7 @@ $(function() {
 
     addParticipantsMessage(data);
     updateScores(data, false);
+    updateState(data);
   });
 
   socket.on('error login', function (data){
@@ -396,8 +399,17 @@ $(function() {
     updateState(data);
   });
 
+  function setImage(data) {
+    $(".curImage").attr('src', data.imageUrl);
+    // resize image appropriately
+    var fillClass = ($(".curImage").height() > $(".curImage").width()) ? 'fillheight' : 'fillwidth';
+    $(".curImage").removeClass('fillheight');
+    $(".curImage").removeClass('fillwidth');
+    $(".curImage").addClass(fillClass);
+  }
+
   function updateState(data) {
-    if ($counter.html()){ 
+    if ($counter.html()){
       $sentence.empty();
       $sentence.html(data.state.join([separator = ' ']));
     }
@@ -457,10 +469,16 @@ $(function() {
         $('#fail-sound').get(0).play();
         $failure.show();
       }
-      $lastImage.attr('src', data.lastImageUrl);
       $lastSentence.text(data.lastSentence);
       $(".curRound").text(data.curRound);
       $(".totalRounds").text(data.totalRounds);
+      setImage(data);
+      // set and resize image appropriately
+      $lastImage.attr('src', data.lastImageUrl);
+      var fillClass = ($(".curImage").height() > $(".curImage").width()) ? 'fillheight' : 'fillwidth';
+      $lastImage.removeClass('fillheight');
+      $lastImage.removeClass('fillwidth');
+      $lastImage.addClass(fillClass);
 
       if (data.isLastRound) {
         $('#lastRoundText').show();
@@ -474,13 +492,7 @@ $(function() {
   // Whenever the server tells us that we can play the game
   socket.on('start round', function(data) {
     if(username){
-      $(".curImage").attr('src', data.imageUrl);
-      // resize image appropriately
-      var fillClass = ($(".curImage").height() > $(".curImage").width()) ? 'fillheight' : 'fillwidth';
-      $(".curImage").removeClass('fillheight');
-      $(".curImage").removeClass('fillwidth');
-      $(".curImage").addClass(fillClass);
-  
+      setImage(data);
       // center the image
       // setTimeout(function(){
       //   $('.curImage').attr('style', '');
@@ -554,6 +566,7 @@ $(function() {
     $resultsPage.hide();
     $lastRoundText.hide();
     $sentencePage.show();
+    $sentenceInput.val("");
     $sentenceInput.focus();
     $waitingPage.hide();
     $loginPage.hide();

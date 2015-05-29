@@ -233,6 +233,8 @@ io.on('connection', function (socket) {
         scores: scores,
         usernames: usernameArr,
         sentence: sentence,
+        imageUrl: imageUrls[imageIndex]["image"],
+        state: sentenceState,
         username: username
       });
       // echo globally (all clients) that a person has connected
