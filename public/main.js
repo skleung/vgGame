@@ -491,6 +491,9 @@ $(function() {
       log(data.leader + " is currently setting the sentence.", {
         prepend: true
       });
+      var color = getUsernameColor(data.leader);
+      var html = "<strong style='color:" + color + "'> " + data.leader + " </strong> is currently setting the sentence."
+      $("#sentence").html(html);
     }
   });
 

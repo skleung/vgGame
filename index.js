@@ -292,9 +292,6 @@ io.on('connection', function (socket) {
       }
     }
 
-    console.log("finished updating state ");
-    console.log(sentenceState);
-
     // reset timer when the sentence is created
     countdown = GAME_TIME_LIMIT;
     // echo globally (all clients) that a sentence has been set
