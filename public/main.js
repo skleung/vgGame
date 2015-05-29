@@ -46,6 +46,9 @@ $(function() {
   var $currentInput = $usernameInput.focus();
   var $sentenceInput = $sentenceInput.focus();
 
+  var TRANSITION_TIME_LIMIT = 7;
+  var GAME_TIME_LIMIT = 45;
+
   var $reset = $("#reset");
   $reset.hide();
   $sentencePage.hide();
@@ -376,6 +379,7 @@ $(function() {
   // Whenever the server emits 'sentence set' we can start the game
   socket.on('sentence set', function (data) {
     log(data.owner + " has set the sentence!");
+    $counter.html(GAME_TIME_LIMIT);
     $inputMessage.prop('disabled', false);
     updateState(data);
   });
@@ -423,8 +427,7 @@ $(function() {
 
   // Whenever the server tells us to wait
   socket.on('wait', function (data) {
-    if(username.length == 0) return;
-    showWaitingPage(data);
+    if(username) showWaitingPage(data);
   });
 
   // Whenever a user hits a word by themselves
@@ -443,54 +446,56 @@ $(function() {
   });
 
   socket.on('show results', function(data) {
-    if(username.length == 0) return;
-    showResultsPage();
-    if (data.success) {
-      $('#success-sound').get(0).play();
-      $success.show();
-    } else {
-      $('#fail-sound').get(0).play();
-      $failure.show();
-    }
-    $lastImage.attr('src', data.lastImageUrl);
-    $lastSentence.text(data.lastSentence);
-    $(".curRound").text(data.curRound);
-    $(".totalRounds").text(data.totalRounds);
+    if(username){
+      showResultsPage();
+      if (data.success) {
+        $('#success-sound').get(0).play();
+        $success.show();
+      } else {
+        $('#fail-sound').get(0).play();
+        $failure.show();
+      }
+      $lastImage.attr('src', data.lastImageUrl);
+      $lastSentence.text(data.lastSentence);
+      $(".curRound").text(data.curRound);
+      $(".totalRounds").text(data.totalRounds);
 
-    if (data.isLastRound) {
-      $('#lastRoundText').show();
-      $('.winner').text(data.winner);
-      var color = getUsernameColor(username);
-      $('.winner').css("color", color);
-      $('.maxScore').text(data.maxScore);
+      if (data.isLastRound) {
+        $('#lastRoundText').show();
+        $('.winner').text(data.winner);
+        var color = getUsernameColor(username);
+        $('.winner').css("color", color);
+        $('.maxScore').text(data.maxScore);
+      }
     }
   });
   // Whenever the server tells us that we can play the game
   socket.on('start round', function(data) {
-    if(username.length == 0) return;
-    $(".curImage").attr('src', data.imageUrl);
-    // resize image appropriately
-    var fillClass = ($(".curImage").height() > $(".curImage").width()) ? 'fillheight' : 'fillwidth';
-    $(".curImage").removeClass('fillheight');
-    $(".curImage").removeClass('fillwidth');
-    $(".curImage").addClass(fillClass);
-
-    // center the image
-    // setTimeout(function(){
-    //   $('.curImage').attr('style', '');
-    //   $(".curImage").css('position', 'relative');
-    //   $(".curImage").css('left', '50%');
-    //   console.log("width = " + $(".curImage").width());
-    //   console.log("half = " + $(".curImage").width()/2.0);
-    //   $(".curImage").css('margin-left', "-"+ $(".curImage").width()/2.0+'px');
-    // }, 0);
-    if(data.leader == username){
-      showSentencePage();
-    }else{
-      showChatPage();
-      log(data.leader + " is currently setting the sentence.", {
-        prepend: true
-      });
+    if(username){
+      $(".curImage").attr('src', data.imageUrl);
+      // resize image appropriately
+      var fillClass = ($(".curImage").height() > $(".curImage").width()) ? 'fillheight' : 'fillwidth';
+      $(".curImage").removeClass('fillheight');
+      $(".curImage").removeClass('fillwidth');
+      $(".curImage").addClass(fillClass);
+  
+      // center the image
+      // setTimeout(function(){
+      //   $('.curImage').attr('style', '');
+      //   $(".curImage").css('position', 'relative');
+      //   $(".curImage").css('left', '50%');
+      //   console.log("width = " + $(".curImage").width());
+      //   console.log("half = " + $(".curImage").width()/2.0);
+      //   $(".curImage").css('margin-left', "-"+ $(".curImage").width()/2.0+'px');
+      // }, 0);
+      if(data.leader == username){
+        showSentencePage();
+      }else{
+        showChatPage();
+        log(data.leader + " is currently setting the sentence.", {
+          prepend: true
+        });
+      }
     }
   });
 
