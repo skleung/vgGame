@@ -8,7 +8,7 @@ var Parse = require('parse').Parse;
 var leader_num = 0;
 
 // Note: this JSON file is cached. So don't run any cron stuff on this script
-var imageUrls = require('./images.json');
+var imageUrls = require('./selected_images.json');
 var stopWords = require('stopwords').english;
 
 // initialize Parse
