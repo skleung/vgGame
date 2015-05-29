@@ -383,6 +383,7 @@ $(function() {
   socket.on('sentence set', function (data) {
     log(data.owner + " has set the sentence!");
     $counter.html(data.countdown);
+    $inputMessage.val("");
     $inputMessage.prop('disabled', false);
     updateState(data);
   });
