@@ -444,6 +444,7 @@ $(function() {
 
   socket.on('show results', function(data) {
     if(username.length == 0) return;
+    $inputMessage.prop('disabled', false);
     showResultsPage();
     if (data.success) {
       $('#success-sound').get(0).play();
