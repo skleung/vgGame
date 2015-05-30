@@ -8,7 +8,7 @@ var Parse = require('parse').Parse;
 var leader_num = 0;
 
 // Note: this JSON file is cached. So don't run any cron stuff on this script
-var imageUrls = require('./selected_images.json');
+var imageUrls = require('./selected_images_1.json');
 var stopWords = require('stopwords').english;
 
 // initialize Parse
@@ -61,7 +61,7 @@ function startRound() {
   if (curRound == NUM_ROUNDS) {
     lastRound = true;
   }
-  imageIndex = Math.floor(Math.random() * imageUrls.length);
+  imageIndex = (imageIndex + 1) % imageUrls.length;//Math.floor(Math.random() * imageUrls.length);
   leader_num = (leader_num + 1) % numUsers;
   io.sockets.emit('start round',{
     numUsers: numUsers,
