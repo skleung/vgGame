@@ -8,11 +8,11 @@
 
 .fillheight{
   width: auto;
-  height: 500px;
+  max-height: 500px;
 }
 
 .fillwidth{
-  height: 500px;
+  max-height: 500px;
   width: auto;
 }
 

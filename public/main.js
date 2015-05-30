@@ -507,6 +507,7 @@ $(function() {
         showSentencePage();
       }else{
         showChatPage();
+        $inputMessage.val("");
         log(data.leader + " is currently setting the sentence.", {
           prepend: true
         });
