@@ -291,6 +291,7 @@ io.on('connection', function (socket) {
       var word = sentenceArr[i].toLowerCase();
       if (stopWords.indexOf(word) >= 0) {
         updateState(word);
+        freqMap[word] = 1; // prevent guessing of these stop words
       }
     }
 
