@@ -46,7 +46,7 @@ function clearState(){
 var TRANSITION_TIME_LIMIT = 10;
 var GAME_TIME_LIMIT = 45;
 var MIN_NUM_USERS = 3;
-var NUM_ROUNDS = 2;
+var NUM_ROUNDS = 12;
 var settingSentence = true;
 var shouldShowResults = true;
 
