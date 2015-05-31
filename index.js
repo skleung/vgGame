@@ -8,7 +8,7 @@ var Parse = require('parse').Parse;
 var leader_num = 0;
 
 // Note: this JSON file is cached. So don't run any cron stuff on this script
-var imageUrls = require('./selected_images_2.json');
+var imageUrls = require('./selected_images.json');
 var stopWords = require('stopwords').english;
 
 // initialize Parse
@@ -43,10 +43,10 @@ function clearState(){
   sentenceState = [];
 }
 
-var TRANSITION_TIME_LIMIT = 7;
+var TRANSITION_TIME_LIMIT = 10;
 var GAME_TIME_LIMIT = 45;
 var MIN_NUM_USERS = 3;
-var NUM_ROUNDS = 10;
+var NUM_ROUNDS = 2;
 var settingSentence = true;
 var shouldShowResults = true;
 
@@ -131,7 +131,6 @@ function saveAndShowResults(success) {
   }
 
   clearState();
-
   countdown = TRANSITION_TIME_LIMIT;
   shouldShowResults = false;
 }
