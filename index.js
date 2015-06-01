@@ -61,7 +61,7 @@ function startRound() {
   if (curRound == NUM_ROUNDS) {
     lastRound = true;
   }
-  imageIndex = (imageIndex + 1) % imageUrls.length;//Math.floor(Math.random() * imageUrls.length);
+  imageIndex = Math.floor(Math.random() * imageUrls.length);
   leader_num = (leader_num + 1) % numUsers;
   io.sockets.emit('start round',{
     numUsers: numUsers,
@@ -103,7 +103,7 @@ function saveAndShowResults(success) {
         winner = user;
       }
     }
-    curRound = 0;
+    curRound = 1;
     io.sockets.emit('show results', {
       lastSentence: sentence,
       lastImageUrl: imageUrls[imageIndex]["image"],
@@ -346,16 +346,30 @@ io.on('connection', function (socket) {
   socket.on('disconnect', function () {
     // remove the username from global scores list
     if (addedUser) {
-      delete scores[socket.username];
-      usernameArr.splice(usernameArr.indexOf(socket.username), 1);
-      --numUsers;
-
       // echo globally that this client has left
       socket.broadcast.emit('user left', {
         username: socket.username,
         scores: scores,
         numUsers: numUsers
       });
+      if (usernameArr[leader_num] === socket.username && sentence === ""){
+        console.log("leader left");
+        socket.broadcast.emit('start round',{
+          numUsers: numUsers,
+          imageUrl: imageUrls[imageIndex]["image"],
+          leader: usernameArr[leader_num + 1]
+        });
+      }
+
+      delete scores[socket.username];
+      usernameArr.splice(usernameArr.indexOf(socket.username), 1);
+      --numUsers;
+      console.log("============stats=======");
+      console.log(numUsers);
+      console.log(usernameArr);
+      if (usernameArr.indexOf(socket.username) < leader_num) {
+        leader_num = (leader_num - 1) % numUsers;
+      }
 
       if(numUsers < MIN_NUM_USERS){
         socket.broadcast.emit('wait',{
