@@ -95,6 +95,7 @@ function saveAndShowResults(success) {
 
   if (lastRound) {
     var maxScore = -1;
+    countdown = TRANSITION_TIME_LIMIT;
     var winner = usernameArr[0];
     for (user in scores) {
       if (scores[user] > maxScore) {
@@ -119,6 +120,7 @@ function saveAndShowResults(success) {
       scores[user]= 0;
     }
   } else {
+    countdown = 30;
     io.sockets.emit('show results', {
       lastSentence: sentence,
       lastImageUrl: imageUrls[imageIndex]["image"],
@@ -129,9 +131,7 @@ function saveAndShowResults(success) {
       isLastRound: false
     });
   }
-
   clearState();
-  countdown = TRANSITION_TIME_LIMIT;
   shouldShowResults = false;
 }
 

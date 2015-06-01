@@ -503,6 +503,11 @@ $(function() {
         var color = getUsernameColor(username);
         $('.winner').css("color", color);
         $('.maxScore').text(data.maxScore);
+        $('#nextGameText').show();
+        $("#nextRoundText").hide();
+      } else {
+        $("#nextRoundText").show();
+        $("#nextGameText").hide();
       }
     }
   });
