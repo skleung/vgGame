@@ -347,11 +347,13 @@ io.on('connection', function (socket) {
     // remove the username from global scores list
     if (addedUser) {
       // echo globally that this client has left
+      delete scores[socket.username];
       socket.broadcast.emit('user left', {
         username: socket.username,
         scores: scores,
         numUsers: numUsers
       });
+
       if (usernameArr[leader_num] === socket.username && sentence === ""){
         console.log("leader left");
         socket.broadcast.emit('start round',{
@@ -360,16 +362,11 @@ io.on('connection', function (socket) {
           leader: usernameArr[leader_num + 1]
         });
       }
-
-      delete scores[socket.username];
-      usernameArr.splice(usernameArr.indexOf(socket.username), 1);
-      --numUsers;
-      console.log("============stats=======");
-      console.log(numUsers);
-      console.log(usernameArr);
       if (usernameArr.indexOf(socket.username) < leader_num) {
         leader_num = (leader_num - 1) % numUsers;
       }
+      usernameArr.splice(usernameArr.indexOf(socket.username), 1);
+      --numUsers;      
 
       if(numUsers < MIN_NUM_USERS){
         socket.broadcast.emit('wait',{

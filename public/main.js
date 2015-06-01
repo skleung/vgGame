@@ -306,7 +306,6 @@ $(function() {
     if (event.which === 13) {
       // validate the sentence
       var sentence = $sentenceInput.val();
-      console.log(sentence.split(" "));
       if (sentence.split(" ").length < 4) {
         $sentenceInputWrapper.addClass("has-error");
         $sentenceInput.css("border-bottom", "5px solid #a94442");
@@ -319,8 +318,6 @@ $(function() {
         if (stopWords.indexOf(ss[i]) < 0) {
           onlystop = false;
         }
-        console.log(ss[i])
-        console.log(stopWords.indexOf(ss[i]))
       }
       if (onlystop){
         $sentenceInputWrapper.addClass("has-error");
@@ -596,7 +593,6 @@ $(function() {
   }
 
   function showResultsPage(){
-    console.log("showing resuls");
     $success.hide();
     $failure.hide();
     $resultsPage.show();
