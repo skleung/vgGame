@@ -31,11 +31,11 @@ $(function() {
   var $nextButton = $('#next');
   var $sentence = $('#sentence'); // Input message input box
   var $lastSentence = $('#lastSentence');
-  var $success = $('#success');
+  var $success = $('.success');
   var $failure = $('#failure');
   var $flagSentenceBtn = $(".flagSentence");
   var $lastImage = $('#lastImage');
-  var $lastRoundText = $('#lastRoundText');
+  var $lastRound = $('.lastRound');
   var $scoreboard = $('#scoreboard');
   var $counter = $('.counter');
 
@@ -54,7 +54,7 @@ $(function() {
   $reset.hide();
   $sentencePage.hide();
   $resultsPage.hide();
-  $lastRoundText.hide();
+  $lastRound.hide();
   $waitingPage.hide();
 
   var socket = io();
@@ -498,16 +498,15 @@ $(function() {
       $lastImage.addClass(fillClass);
 
       if (data.isLastRound) {
-        $('#lastRoundText').show();
         $('.winner').text(data.winner);
         var color = getUsernameColor(username);
         $('.winner').css("color", color);
         $('.maxScore').text(data.maxScore);
-        $('#nextGameText').show();
+        $lastRound.show();
         $("#nextRoundText").hide();
       } else {
+        $lastRound.hide();
         $("#nextRoundText").show();
-        $("#nextGameText").hide();
       }
     }
   });
@@ -559,7 +558,7 @@ $(function() {
   function showChatPage(){
     $waitingPage.hide();
     $resultsPage.hide();
-    $lastRoundText.hide();
+    $lastRound.hide();
     $chatPage.show();
     $loginPage.hide();
     $sentencePage.hide();
@@ -579,7 +578,7 @@ $(function() {
     }
     $waitingUsers.html(usernameHTML);
     $resultsPage.hide();
-    $lastRoundText.hide();
+    $lastRound.hide();
     $waitingPage.show();
     $sentencePage.hide();
     $loginPage.hide();
@@ -587,7 +586,7 @@ $(function() {
   }
   function showSentencePage(){
     $resultsPage.hide();
-    $lastRoundText.hide();
+    $lastRound.hide();
     $sentencePage.show();
     $sentenceInput.val("");
     $sentenceInput.focus();

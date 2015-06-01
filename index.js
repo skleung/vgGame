@@ -46,7 +46,7 @@ function clearState(){
 var TRANSITION_TIME_LIMIT = 10;
 var GAME_TIME_LIMIT = 45;
 var MIN_NUM_USERS = 3;
-var NUM_ROUNDS = 12;
+var NUM_ROUNDS = 2;
 var settingSentence = true;
 var shouldShowResults = true;
 
@@ -95,7 +95,7 @@ function saveAndShowResults(success) {
 
   if (lastRound) {
     var maxScore = -1;
-    countdown = TRANSITION_TIME_LIMIT;
+    countdown = 30;
     var winner = usernameArr[0];
     for (user in scores) {
       if (scores[user] > maxScore) {
@@ -120,7 +120,7 @@ function saveAndShowResults(success) {
       scores[user]= 0;
     }
   } else {
-    countdown = 30;
+    countdown = TRANSITION_TIME_LIMIT;
     io.sockets.emit('show results', {
       lastSentence: sentence,
       lastImageUrl: imageUrls[imageIndex]["image"],
