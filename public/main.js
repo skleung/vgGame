@@ -435,6 +435,7 @@ $(function() {
   function updateScores(data, animated) {
     $scoreboard.html("");
     for (user in data.scores) {
+      console.log(data.scores);
       var color = getUsernameColor(user);
       var score = data.scores[user];
       if (user == username) {
